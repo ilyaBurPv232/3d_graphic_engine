@@ -1,35 +1,51 @@
 #include "openglwidget.h"
+#include "shadermanager.h"
 #include "cube.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
-OpenGLWidget::OpenGLWidget(QWidget *parent)
+OpenGLWidget::OpenGLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
+    cameraController = new CameraController(&scene, this);
+
+    // Добавляем соединение сигнала и слота
+    connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
 OpenGLWidget::~OpenGLWidget()
 {
+    makeCurrent();
+    // Освобождение ресурсов, если необходимо
+    doneCurrent();
 }
 
 void OpenGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(1.0f, 1.0f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
-    program.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/vshader.vsh");
-    program.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/fshader.fsh");
-    program.link();
+    // Загрузка шейдеров через ShaderManager
+    if (!ShaderManager::instance().loadShaderProgram("default",
+                                                     ":/shaders/vshader.vsh",
+                                                     ":/shaders/fshader.fsh")) {
+        qCritical() << "Failed to load shaders!";
+        return;
+    }
 
-    // Предварительная загрузка текстур
-    TextureManager::instance().loadTexture(":/textures/grass.png", "grass");
+    // Просто сохраняем указатель, без копирования
+    program = ShaderManager::instance().getShaderProgram("default");
 
-    // Создание куба с указанием текстуры
-    Cube* cube = new Cube("grass");
+    // Остальной код инициализации...
+    TextureManager::instance().loadTexture(":/textures/water.png", "water");
+    Cube* cube = new Cube("water");
     cube->initialize();
     scene.addShape(cube);
+
+    cameraController->updateCamera();
 }
 
 void OpenGLWidget::resizeGL(int w, int h)
@@ -41,63 +57,34 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    program.bind();
-    scene.renderAll(program);
-    program.release();
-}
 
-void OpenGLWidget::keyPressEvent(QKeyEvent *event)
-{
-    float cameraSpeed = 0.1f;
-    QVector3D cameraPos = scene.getCameraPosition();
-    QVector3D cameraFront = scene.getCameraFront();
-    QVector3D cameraUp = scene.getCameraUp();
-
-    if (event->key() == Qt::Key_W)
-        cameraPos += cameraSpeed * cameraFront;
-    if (event->key() == Qt::Key_S)
-        cameraPos -= cameraSpeed * cameraFront;
-    if (event->key() == Qt::Key_A)
-        cameraPos -= QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
-    if (event->key() == Qt::Key_D)
-        cameraPos += QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
-
-    scene.setCameraPosition(cameraPos);
-    update();
-}
-
-void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    float xpos = event->pos().x();
-    float ypos = event->pos().y();
-
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+    if (program) {
+        program->bind();
+        scene.renderAll(*program);
+        program->release();
     }
+}
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
+void OpenGLWidget::mousePressEvent(QMouseEvent* event)
+{
+    cameraController->mousePressEvent(event);
+    event->accept();
+}
 
-    lastX = xpos;
-    lastY = ypos;
+void OpenGLWidget::mouseMoveEvent(QMouseEvent* event)
+{
+    cameraController->mouseMoveEvent(event);
+    event->accept();
+}
 
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
+void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    cameraController->mouseReleaseEvent(event);
+    event->accept();
+}
 
-    yaw += xoffset;
-    pitch += yoffset;
-
-    if (pitch > 89.0f) pitch = 89.0f;
-    if (pitch < -89.0f) pitch = -89.0f;
-
-    QVector3D front;
-    front.setX(cos(qDegreesToRadians(yaw)) * cos(qDegreesToRadians(pitch)));
-    front.setY(sin(qDegreesToRadians(pitch)));
-    front.setZ(sin(qDegreesToRadians(yaw)) * cos(qDegreesToRadians(pitch)));
-
-    scene.setCameraFront(front.normalized());
-    update();
+void OpenGLWidget::wheelEvent(QWheelEvent* event)
+{
+    cameraController->wheelEvent(event);
+    event->accept();
 }

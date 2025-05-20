@@ -1,9 +1,10 @@
 #include "scene.h"
 
-Scene::Scene() {
-    cameraPos = QVector3D(0.0f, 0.0f, 3.0f);
-    cameraFront = QVector3D(0.0f, 0.0f, -1.0f);
-    cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
+Scene::Scene()
+{
+    cameraPos = QVector3D(0, 0, 5);
+    cameraFront = QVector3D(0, 0, -1);
+    cameraUp = QVector3D(0, 1, 0);
 }
 
 Scene::~Scene() {

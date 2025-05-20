@@ -12,6 +12,7 @@ public:
     Scene();
     ~Scene();
 
+
     void addShape(Shape* shape);
     void renderAll(QOpenGLShaderProgram& program);
 
@@ -25,6 +26,7 @@ public:
     QVector3D getCameraPosition() const { return cameraPos; }
     QVector3D getCameraFront() const { return cameraFront; }
     QVector3D getCameraUp() const { return cameraUp; }
+    const QVector<Shape*>& getShapes() const { return shapes; }
 
 private:
     QVector<Shape*> shapes;
@@ -34,6 +36,8 @@ private:
     QVector3D cameraPos;
     QVector3D cameraFront;
     QVector3D cameraUp;
+
+
 };
 
 #endif // SCENE_H

@@ -7,12 +7,10 @@ Cube::Cube(const QString& textureName) : textureName(textureName)
 
 Cube::~Cube()
 {
-    // Текстура управляется TextureManager, не удаляем здесь
 }
 
 void Cube::initialize()
 {
-    // Загрузка текстуры через менеджер, если еще не загружена
     if (!TextureManager::instance().contains(textureName)) {
         TextureManager::instance().loadTexture(":/textures/grass.png", textureName);
     }
@@ -21,7 +19,7 @@ void Cube::initialize()
 void Cube::setupVertices()
 {
     float vertices[] = {
-        // positions          // texture coords
+        // positions         // texture coords
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,

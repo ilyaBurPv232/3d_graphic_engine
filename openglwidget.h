@@ -4,31 +4,31 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
+#include <QMouseEvent>
 #include "scene.h"
+#include "cameracontroller.h"
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
     Q_OBJECT
+
 public:
-    OpenGLWidget(QWidget* parent = nullptr);
+    explicit OpenGLWidget(QWidget* parent = nullptr);
     ~OpenGLWidget();
 
 protected:
     void initializeGL() override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
-    void keyPressEvent(QKeyEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
-    QOpenGLShaderProgram program;
+    QOpenGLShaderProgram *program;
     Scene scene;
-
-    float yaw = -90.0f;
-    float pitch = 0.0f;
-    float lastX = 400;
-    float lastY = 300;
-    bool firstMouse = true;
+    CameraController* cameraController;
 };
 
 #endif // OPENGLWIDGET_H

@@ -24,6 +24,7 @@ protected:
     QMatrix4x4 modelMatrix;
     QOpenGLBuffer vertexBuffer;
     QOpenGLTexture* texture = nullptr;
+    QQuaternion rotationQuat;
 };
 
 #endif // SHAPE_H

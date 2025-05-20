@@ -2,10 +2,9 @@
 #define TEXTUREMANAGER_H
 
 #include <QOpenGLTexture>
+#include <QOpenGLContext>
 #include <QString>
 #include <QMap>
-#include <QImage>
-
 
 class TextureManager
 {

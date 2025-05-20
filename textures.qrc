@@ -4,5 +4,6 @@
         <file>cubes_gray.png</file>
         <file>grass.png</file>
         <file>wood.png</file>
+        <file>water.png</file>
     </qresource>
 </RCC>
