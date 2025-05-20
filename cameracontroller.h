@@ -43,7 +43,7 @@ private:
     Scene* m_scene;
 
     float m_distance = 5.0f;
-    QVector2D m_rotationAngles = QVector2D(30.0f, 0.0f); // X (pitch), Y (yaw)
+    QVector2D m_rotationAngles = QVector2D(30.0f, 0.0f);
     QVector3D m_center = QVector3D(0, 0, 0);
 
     float m_rotationSpeed = 0.5f;

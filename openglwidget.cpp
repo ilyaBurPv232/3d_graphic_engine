@@ -11,14 +11,12 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
 
-    // Добавляем соединение сигнала и слота
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
 OpenGLWidget::~OpenGLWidget()
 {
     makeCurrent();
-    // Освобождение ресурсов, если необходимо
     doneCurrent();
 }
 
@@ -28,7 +26,6 @@ void OpenGLWidget::initializeGL()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
-    // Загрузка шейдеров через ShaderManager
     if (!ShaderManager::instance().loadShaderProgram("default",
                                                      ":/shaders/vshader.vsh",
                                                      ":/shaders/fshader.fsh")) {
@@ -36,11 +33,9 @@ void OpenGLWidget::initializeGL()
         return;
     }
 
-    // Просто сохраняем указатель, без копирования
     program = ShaderManager::instance().getShaderProgram("default");
 
-    // Остальной код инициализации...
-    TextureManager::instance().loadTexture(":/textures/water.png", "water");
+    TextureManager::instance().loadTexture(":/textures/magma.png", "water");
     Cube* cube = new Cube("water");
     cube->initialize();
     scene.addShape(cube);

@@ -25,10 +25,12 @@ void CameraController::mouseMoveEvent(QMouseEvent* event)
     m_lastMousePos = event->pos();
 
     if (m_isRotating) {
-        m_rotationAngles.setX(m_rotationAngles.x() - delta.y() * m_rotationSpeed);
+        m_rotationAngles.setX(m_rotationAngles.x() + delta.y() * m_rotationSpeed);
         m_rotationAngles.setY(m_rotationAngles.y() - delta.x() * m_rotationSpeed);
 
-        m_rotationAngles.setX(qBound(-85.0f, m_rotationAngles.x(), 85.0f));
+
+        m_rotationAngles.setX(fmod(m_rotationAngles.x(), 360.0f));
+        m_rotationAngles.setY(fmod(m_rotationAngles.y(), 360.0f));
 
         updateCamera();
     }
@@ -37,16 +39,16 @@ void CameraController::mouseMoveEvent(QMouseEvent* event)
         float tanFov = tan(qDegreesToRadians(45.0f) / 2.0f);
 
         QVector3D viewDir = QVector3D(
-            qSin(qDegreesToRadians(m_rotationAngles.y())) * qCos(qDegreesToRadians(m_rotationAngles.x())),
-            qSin(qDegreesToRadians(m_rotationAngles.x())),
-            qCos(qDegreesToRadians(m_rotationAngles.y())) * qCos(qDegreesToRadians(m_rotationAngles.x()))
-        ).normalized();
+                                qSin(qDegreesToRadians(m_rotationAngles.y())) * qCos(qDegreesToRadians(m_rotationAngles.x())),
+                                qSin(qDegreesToRadians(m_rotationAngles.x())),
+                                qCos(qDegreesToRadians(m_rotationAngles.y())) * qCos(qDegreesToRadians(m_rotationAngles.x()))
+                                ).normalized();
 
-        QVector3D right = QVector3D::crossProduct(viewDir, QVector3D(0, 1, 0)).normalized();
+        QVector3D right = QVector3D::crossProduct(viewDir, QVector3D(0, -1, 0)).normalized();
         QVector3D up = QVector3D::crossProduct(right, viewDir).normalized();
 
         m_center -= right * (delta.x() * m_panSpeed * m_distance * aspect * tanFov);
-        m_center += up * (delta.y() * m_panSpeed * m_distance * tanFov);
+        m_center -= up * (delta.y() * m_panSpeed * m_distance * tanFov);
 
         updateCamera();
     }
@@ -65,7 +67,7 @@ void CameraController::wheelEvent(QWheelEvent* event)
 {
     float delta = event->angleDelta().y();
     m_distance *= (1.0f - delta * m_zoomSpeed);
-    m_distance = qBound(1.0f, m_distance, 100.0f);
+    m_distance = qBound(0.5f, m_distance, 100.0f);
 
     updateCamera();
 }
@@ -81,14 +83,15 @@ void CameraController::updateCamera()
         m_distance * sinY * cosX,
         m_distance * sinX,
         m_distance * cosY * cosX
-    );
+        );
 
     position += m_center;
 
-    QVector3D up(0, 1, 0);
-    if (qAbs(m_rotationAngles.x()) > 85.0f) {
-        up = QVector3D(0, 0, m_rotationAngles.x() > 0 ? -1 : 1);
-    }
+    QVector3D up = QVector3D(
+                       -sinY * sinX,
+                       cosX,
+                       -cosY * sinX
+                       ).normalized();
 
     m_scene->setCameraPosition(position);
     m_scene->setCameraFront((m_center - position).normalized());
