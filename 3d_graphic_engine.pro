@@ -11,11 +11,19 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    openglwidget.cpp
+    openglwidget.cpp \
+    scene.cpp \
+    shadermanager.cpp \
+    shape.cpp \
+    texturemanager.cpp
 
 HEADERS += \
     mainwindow.h \
-    openglwidget.h
+    openglwidget.h \
+    scene.h \
+    shadermanager.h \
+    shape.h \
+    texturemanager.h
 
 FORMS += \
     mainwindow.ui

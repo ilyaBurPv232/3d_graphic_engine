@@ -4,6 +4,7 @@
 OpenGLWidget::OpenGLWidget(QWidget *parent)
     : QOpenGLWidget(parent), texture(nullptr)
 {
+
     cameraPos = QVector3D(0.0f, 0.0f, 3.0f);
     cameraFront = QVector3D(0.0f, 0.0f, -1.0f);
     cameraUp = QVector3D(0.0f, 1.0f, 0.0f);
@@ -21,7 +22,7 @@ OpenGLWidget::~OpenGLWidget()
 void OpenGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(1.0f, 1.0f, 0.3f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -81,7 +82,7 @@ void OpenGLWidget::initializeGL()
     vertexBuffer.allocate(vertices, sizeof(vertices));
 
     // Загрузка текстуры
-    texture = new QOpenGLTexture(QImage(":/textures/magma.png").mirrored());
+    texture = new QOpenGLTexture(QImage(":/textures/grass.png").flipped());
     texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     texture->setMagnificationFilter(QOpenGLTexture::Linear);
 }
@@ -147,14 +148,18 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
     float xpos = event->pos().x();
     float ypos = event->pos().y();
 
+
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;
         firstMouse = false;
     }
 
+
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    float yoffset = lastY - ypos;
+
+
     lastX = xpos;
     lastY = ypos;
 

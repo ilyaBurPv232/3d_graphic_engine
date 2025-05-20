@@ -44,7 +44,6 @@ private:
     float lastY = 300;
     bool firstMouse = true;
 
-    QPoint lastMousePosition;
     bool mousePressed = false;
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
