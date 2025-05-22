@@ -1,4 +1,5 @@
 #include "shape.h"
+#include "texturemanager.h"
 
 Shape::Shape() {
     vertexBuffer.create();

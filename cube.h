@@ -2,7 +2,6 @@
 #define CUBE_H
 
 #include "shape.h"
-#include "texturemanager.h"
 
 class Cube : public Shape
 {

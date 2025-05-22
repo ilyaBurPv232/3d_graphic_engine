@@ -1,5 +1,6 @@
 #include "openglwidget.h"
 #include "shadermanager.h"
+#include "texturemanager.h"
 #include "cube.h"
 #include <QDebug>
 #include <QMouseEvent>
@@ -17,6 +18,7 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
 OpenGLWidget::~OpenGLWidget()
 {
     makeCurrent();
+    TextureManager::instance().clear();
     doneCurrent();
 }
 
@@ -35,9 +37,11 @@ void OpenGLWidget::initializeGL()
 
     program = ShaderManager::instance().getShaderProgram("default");
 
-    TextureManager::instance().loadTexture(":/textures/magma.png", "water");
-    Cube* cube = new Cube("water");
+    TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
+    TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
+    Cube* cube = new Cube("magma");
     cube->initialize();
+    cube->setScale(QVector3D (1.5,1.5,1.5));
     scene.addShape(cube);
 
     cameraController->updateCamera();

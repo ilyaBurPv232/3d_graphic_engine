@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "texturemanager.h"
 
 Cube::Cube(const QString& textureName) : textureName(textureName)
 {

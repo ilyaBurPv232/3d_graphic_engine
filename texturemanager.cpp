@@ -53,12 +53,9 @@ void TextureManager::removeTexture(const QString& name)
     }
 }
 
-void TextureManager::clear()
-{
+void TextureManager::clear() {
     if (QOpenGLContext::currentContext()) {
         qDeleteAll(textures);
-    } else {
-        qWarning() << "No OpenGL context active - leaking textures";
+        textures.clear();
     }
-    textures.clear();
 }
