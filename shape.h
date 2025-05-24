@@ -27,8 +27,8 @@ protected:
     QOpenGLTexture* texture = nullptr;
     QQuaternion rotationQuat;
 
-    QVector3D scaleFactor = QVector3D(1, 1, 1);  // Инициализация единичным масштабом
-    QVector3D position = QVector3D(0, 0, 0);     // Инициализация нулевой позицией
+    QVector3D scaleFactor = QVector3D(1, 1, 1);
+    QVector3D position = QVector3D(0, 0, 0);
 };
 
 #endif // SHAPE_H

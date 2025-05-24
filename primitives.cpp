@@ -1,13 +1,13 @@
-#include "cube.h"
+#include "primitives.h"
 #include "texturemanager.h"
+
+#include <QDebug>
+#include <QOpenGLTexture>
+#include <cmath>
 
 Cube::Cube(const QString& textureName) : textureName(textureName)
 {
     setupVertices();
-}
-
-Cube::~Cube()
-{
 }
 
 void Cube::initialize()
@@ -20,7 +20,6 @@ void Cube::initialize()
 void Cube::setupVertices()
 {
     float vertices[] = {
-        // positions         // texture coords
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -90,3 +89,73 @@ void Cube::render(QOpenGLShaderProgram& program)
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+
+Pyramid::Pyramid(const QString& textureName) : textureName(textureName)
+{
+    setupVertices();
+}
+
+void Pyramid::initialize()
+{
+    if (!TextureManager::instance().contains(textureName)) {
+        TextureManager::instance().loadTexture(":/textures/default.png", textureName);
+    }
+}
+
+void Pyramid::setupVertices()
+{
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,    1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,    0.0f, 1.0f,
+
+        0.0f,  0.5f,  0.0f,    0.5f, 1.0f,
+
+        -0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
+        0.0f,  0.5f,  0.0f,    0.5f, 1.0f,
+
+        0.5f, -0.5f,  0.5f,    0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
+        0.0f,  0.5f,  0.0f,    0.5f, 1.0f,
+
+        0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f,
+        0.0f,  0.5f,  0.0f,    0.5f, 1.0f,
+
+        -0.5f, -0.5f, -0.5f,    0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,    1.0f, 0.0f,
+        0.0f,  0.5f,  0.0f,    0.5f, 1.0f
+    };
+
+    vertexBuffer.bind();
+    vertexBuffer.allocate(vertices, sizeof(vertices));
+}
+
+void Pyramid::render(QOpenGLShaderProgram& program)
+{
+    program.setUniformValue("model", modelMatrix);
+
+    QOpenGLTexture* texture = TextureManager::instance().getTexture(textureName);
+    if (texture) {
+        texture->bind();
+        program.setUniformValue("ourTexture", 0);
+    }
+
+    vertexBuffer.bind();
+
+    int vertexLocation = program.attributeLocation("aPos");
+    program.enableAttributeArray(vertexLocation);
+    program.setAttributeBuffer(vertexLocation, GL_FLOAT, 0, 3, 5 * sizeof(float));
+
+    int texCoordLocation = program.attributeLocation("aTexCoord");
+    program.enableAttributeArray(texCoordLocation);
+    program.setAttributeBuffer(texCoordLocation, GL_FLOAT, 3 * sizeof(float), 2, 5 * sizeof(float));
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    glDrawArrays(GL_TRIANGLES, 4, 12);
+}
+
+

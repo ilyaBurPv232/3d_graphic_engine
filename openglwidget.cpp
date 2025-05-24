@@ -1,7 +1,7 @@
 #include "openglwidget.h"
 #include "shadermanager.h"
 #include "texturemanager.h"
-#include "cube.h"
+#include "primitives.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -39,13 +39,19 @@ void OpenGLWidget::initializeGL()
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
+    TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
+
     Cube* cube = new Cube("magma");
     cube->initialize();
-
-    cube->setScale(QVector3D (1.5,1.5,1.5));
-
-
+    cube->setScale(QVector3D (1.5f,1.5f,1.5f));
     scene.addShape(cube);
+
+
+    Pyramid* pyramid = new Pyramid("wood");
+    pyramid->initialize();
+    pyramid->setPosition(QVector3D(0.0f, 1.35f, 0.0f));
+    pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
+    scene.addShape(pyramid);
 
     cameraController->updateCamera();
 }

@@ -10,10 +10,10 @@ CONFIG += c++17
 
 SOURCES += \
     cameracontroller.cpp \
-    cube.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
+    primitives.cpp \
     scene.cpp \
     shadermanager.cpp \
     shape.cpp \
@@ -21,9 +21,9 @@ SOURCES += \
 
 HEADERS += \
     cameracontroller.h \
-    cube.h \
     mainwindow.h \
     openglwidget.h \
+    primitives.h \
     scene.h \
     shadermanager.h \
     shape.h \
