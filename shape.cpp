@@ -11,16 +11,23 @@ Shape::~Shape() {
 }
 
 void Shape::setPosition(const QVector3D& position) {
-    modelMatrix.setToIdentity();
-    modelMatrix.translate(position);
+    this->position = position;
+    updateModelMatrix();
 }
 
 void Shape::setRotation(float angle, const QVector3D& axis) {
     rotationQuat = QQuaternion::fromAxisAndAngle(axis, angle) * rotationQuat;
-    modelMatrix.setToIdentity();
-    modelMatrix.rotate(rotationQuat);
+    updateModelMatrix();
 }
 
 void Shape::setScale(const QVector3D& scale) {
-    modelMatrix.scale(scale);
+    scaleFactor = scale;
+    updateModelMatrix();
+}
+
+void Shape::updateModelMatrix() {
+    modelMatrix.setToIdentity();
+    modelMatrix.translate(position);
+    modelMatrix.rotate(rotationQuat);
+    modelMatrix.scale(scaleFactor);
 }

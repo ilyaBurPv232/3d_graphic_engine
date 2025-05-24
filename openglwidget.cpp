@@ -41,7 +41,10 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
     Cube* cube = new Cube("magma");
     cube->initialize();
+
     cube->setScale(QVector3D (1.5,1.5,1.5));
+
+
     scene.addShape(cube);
 
     cameraController->updateCamera();
