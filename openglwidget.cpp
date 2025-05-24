@@ -44,14 +44,22 @@ void OpenGLWidget::initializeGL()
     Cube* cube = new Cube("magma");
     cube->initialize();
     cube->setScale(QVector3D (1.5f,1.5f,1.5f));
+    cube->setPosition(QVector3D(1.0f, 0.0f, 0.0f));
     scene.addShape(cube);
 
 
     Pyramid* pyramid = new Pyramid("wood");
     pyramid->initialize();
-    pyramid->setPosition(QVector3D(0.0f, 1.35f, 0.0f));
+    pyramid->setPosition(QVector3D(1.0f, 1.35f, 0.0f));
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
+
+    Sphere* sphere = new Sphere("cubes");
+    sphere->initialize();
+    sphere->setPosition(QVector3D(-1.0f, 0.0f, 0.0f));
+    sphere->setScale(QVector3D(0.8f, 0.8f, 0.8f));
+    sphere->setRotation(90, QVector3D(0,1,0));
+    scene.addShape(sphere);
 
     cameraController->updateCamera();
 }

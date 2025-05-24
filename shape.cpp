@@ -1,13 +1,14 @@
 #include "shape.h"
-#include "texturemanager.h"
 
-Shape::Shape() {
+Shape::Shape()
+    : indexBuffer(QOpenGLBuffer::IndexBuffer) {
     vertexBuffer.create();
+    indexBuffer.create();
 }
 
 Shape::~Shape() {
     vertexBuffer.destroy();
-    if (texture) delete texture;
+    indexBuffer.destroy();
 }
 
 void Shape::setPosition(const QVector3D& position) {

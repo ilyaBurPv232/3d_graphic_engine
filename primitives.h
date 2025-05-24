@@ -31,4 +31,20 @@ private:
     QString textureName;
 };
 
+class Sphere : public Shape {
+public:
+    Sphere(const QString& textureName = "default", float radius = 1.0f, int sectors = 36, int stacks = 18);
+    ~Sphere() = default;
+
+    void initialize() override;
+    void render(QOpenGLShaderProgram& program) override;
+
+private:
+    void setupVertices();
+    QString textureName;
+    float radius;
+    int sectors;
+    int stacks;
+};
+
 #endif // PRIMITIVES_H

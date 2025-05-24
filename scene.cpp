@@ -16,6 +16,8 @@ void Scene::addShape(Shape* shape) {
 }
 
 void Scene::renderAll(QOpenGLShaderProgram& program) {
+    program.bind();
+
     view.setToIdentity();
     view.lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
@@ -25,6 +27,7 @@ void Scene::renderAll(QOpenGLShaderProgram& program) {
     for (Shape* shape : shapes) {
         shape->render(program);
     }
+    program.release();
 }
 
 QMatrix4x4 Scene::getViewMatrix() const {
