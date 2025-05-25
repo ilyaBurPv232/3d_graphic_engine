@@ -5,6 +5,8 @@
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
+#include <QTimer>
+#include <QDateTime>
 #include "scene.h"
 #include "cameracontroller.h"
 
@@ -25,10 +27,20 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
+    void updateFPS();
+
 private:
     QOpenGLShaderProgram *program;
     Scene scene;
     CameraController* cameraController;
+
+    QTimer *fpsTimer;
+    int frameCount;
+    qint64 lastTime;
+
+signals:
+    void fpsUpdated(int fps);
+
 };
 
 #endif // OPENGLWIDGET_H

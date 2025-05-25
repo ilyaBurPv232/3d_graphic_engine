@@ -7,10 +7,14 @@
 #include <QWheelEvent>
 
 OpenGLWidget::OpenGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent)
+    : QOpenGLWidget(parent), frameCount(0), lastTime(0)
 {
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
+
+    fpsTimer = new QTimer(this);
+    connect(fpsTimer, &QTimer::timeout, this, &OpenGLWidget::updateFPS);
+    fpsTimer->start(100); // Обновление раз в секунду
 
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
 }
@@ -22,10 +26,25 @@ OpenGLWidget::~OpenGLWidget()
     doneCurrent();
 }
 
+void OpenGLWidget::updateFPS()
+{
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+    if (lastTime == 0) {
+        lastTime = currentTime;
+        return;
+    }
+
+    int fps = frameCount * 1000 / (currentTime - lastTime);
+    frameCount = 0;
+    lastTime = currentTime;
+
+    emit fpsUpdated(fps); // Нужно добавить сигнал в заголовочный файл
+}
+
 void OpenGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
     if (!ShaderManager::instance().loadShaderProgram("default",
@@ -54,10 +73,9 @@ void OpenGLWidget::initializeGL()
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
 
-    Sphere* sphere = new Sphere("cubes");
+    Sphere* sphere = new Sphere("cubes", 0.8f);
     sphere->initialize();
     sphere->setPosition(QVector3D(-1.0f, 0.0f, 0.0f));
-    sphere->setScale(QVector3D(0.8f, 0.8f, 0.8f));
     sphere->setRotation(90, QVector3D(0,1,0));
     scene.addShape(sphere);
 
@@ -72,6 +90,8 @@ void OpenGLWidget::resizeGL(int w, int h)
 
 void OpenGLWidget::paintGL()
 {
+    frameCount++;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (program) {
