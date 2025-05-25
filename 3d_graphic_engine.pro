@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     cameracontroller.cpp \
+    light.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 
 HEADERS += \
     cameracontroller.h \
+    light.h \
     mainwindow.h \
     openglwidget.h \
     primitives.h \

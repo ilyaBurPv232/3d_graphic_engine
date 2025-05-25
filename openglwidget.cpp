@@ -15,7 +15,7 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
 
     fpsTimer = new QTimer(this);
     connect(fpsTimer, &QTimer::timeout, this, &OpenGLWidget::updateFPS);
-    fpsTimer->start(100); // Обновление раз в секунду
+    fpsTimer->start(100);
 
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
 
@@ -41,11 +41,14 @@ void OpenGLWidget::updateFPS()
     frameCount = 0;
     lastTime = currentTime;
 
-    emit fpsUpdated(fps); // Нужно добавить сигнал в заголовочный файл
+    emit fpsUpdated(fps);
 }
 
 void OpenGLWidget::initializeGL()
 {
+    light = new Light(this);
+    connect(light, &Light::lightChanged, this, QOverload<>::of(&OpenGLWidget::update));
+
     initializeOpenGLFunctions();
     glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -118,19 +121,27 @@ void OpenGLWidget::paintGL()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Рендерим скайбокс с особыми настройками глубины
-    glDepthMask(GL_FALSE); // Отключаем запись глубины
+    glDepthMask(GL_FALSE);
     QOpenGLShaderProgram* skyboxProgram = ShaderManager::instance().getShaderProgram("skybox");
     if (skyboxProgram) {
         skyboxProgram->bind();
         scene.renderAll(*skyboxProgram);
         skyboxProgram->release();
     }
-    glDepthMask(GL_TRUE); // Включаем запись глубины обратно
+    glDepthMask(GL_TRUE);
 
-    // Рендерим обычные объекты
     if (program) {
         program->bind();
+
+        program->setUniformValue("lightPos", light->position());
+        program->setUniformValue("viewPos", scene.getCameraPosition());
+        program->setUniformValue("lightColor", light->color());
+        program->setUniformValue("ambientStrength", light->ambientStrength());
+        program->setUniformValue("specularStrength", light->specularStrength());
+        program->setUniformValue("shininess", light->shininess());
+
+        program->setUniformValue("objectColor", QVector3D(1.0f, 1.0f, 1.0f));
+
         scene.renderAll(*program);
         program->release();
     }

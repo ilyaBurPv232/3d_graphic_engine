@@ -28,6 +28,7 @@ public:
     QVector3D getCameraUp() const { return cameraUp; }
     const QVector<Shape*>& getShapes() const { return shapes; }
 
+
 private:
     QVector<Shape*> shapes;
     QMatrix4x4 projection;

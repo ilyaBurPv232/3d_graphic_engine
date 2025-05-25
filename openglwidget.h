@@ -9,6 +9,7 @@
 #include <QDateTime>
 #include "scene.h"
 #include "cameracontroller.h"
+#include "light.h"
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -40,6 +41,8 @@ private:
 
     QElapsedTimer frameTimer;
     float deltaTime = 0.0f;
+
+    Light* light;
 
 signals:
     void fpsUpdated(int fps);
