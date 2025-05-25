@@ -52,5 +52,5 @@ void Scene::setCameraUp(const QVector3D& up) {
 
 void Scene::resize(int w, int h) {
     projection.setToIdentity();
-    projection.perspective(45.0f, float(w) / float(h), 0.1f, 100.0f);
+    projection.perspective(45.0f, float(w) / float(h), 0.1f, 1000.0f);
 }

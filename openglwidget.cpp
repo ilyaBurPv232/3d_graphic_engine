@@ -2,6 +2,7 @@
 #include "shadermanager.h"
 #include "texturemanager.h"
 #include "primitives.h"
+#include "skybox.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -50,10 +51,19 @@ void OpenGLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
 
+    // Загружаем обычные шейдеры
     if (!ShaderManager::instance().loadShaderProgram("default",
                                                      ":/shaders/vshader.vsh",
                                                      ":/shaders/fshader.fsh")) {
-        qCritical() << "Failed to load shaders!";
+        qCritical() << "Failed to load default shaders!";
+        return;
+    }
+
+    // Загружаем шейдеры для скайбокса
+    if (!ShaderManager::instance().loadShaderProgram("skybox",
+                                                     ":/shaders/vskybox.vsh",
+                                                     ":/shaders/fskybox.fsh")) {
+        qCritical() << "Failed to load skybox shaders!";
         return;
     }
 
@@ -64,28 +74,31 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
 
-    Cube* cube = new Cube("magma");
+    Skybox *skybox = new Skybox();
+    skybox->initialize();
+    skybox->setScale(QVector3D(500, 500, 500));
+    scene.addShape(skybox);
+
+    Cube *cube = new Cube("magma");
     cube->initialize();
-    cube->setScale(QVector3D (1.5f,1.5f,1.5f));
-    cube->setPosition(QVector3D(1.0f, 0.0f, 0.0f));
+    cube->setScale(QVector3D(1.5f, 1.5f, 1.5f));
     scene.addShape(cube);
 
-
-    Pyramid* pyramid = new Pyramid("wood");
+    Pyramid *pyramid = new Pyramid("wood");
     pyramid->initialize();
-    pyramid->setPosition(QVector3D(1.0f, 1.35f, 0.0f));
+    pyramid->setPosition(QVector3D(0.0f, 1.35f, 0.0f));
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
 
-    Sphere* sphere = new Sphere("cubes", 0.8f);
+    Sphere *sphere = new Sphere("cubes", 0.5f);
     sphere->initialize();
-    sphere->setPosition(QVector3D(-1.0f, 0.0f, 0.0f));
-    sphere->setRotation(90, QVector3D(0,1,0));
+    sphere->setPosition(QVector3D(-1.5f, 0.0f, 0.0f));
+    sphere->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(sphere);
 
     Cylinder *cylinder = new Cylinder("water", 0.5f, 1.0f);
     cylinder->initialize();
-    cylinder->setPosition(QVector3D(2.5f, 0.0f, 0.0f));
+    cylinder->setPosition(QVector3D(1.5f, 0.0f, 0.0f));
     cylinder->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(cylinder);
 
@@ -101,11 +114,21 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     frameCount++;
-
     deltaTime = frameTimer.restart() / 1000.0f;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Рендерим скайбокс с особыми настройками глубины
+    glDepthMask(GL_FALSE); // Отключаем запись глубины
+    QOpenGLShaderProgram* skyboxProgram = ShaderManager::instance().getShaderProgram("skybox");
+    if (skyboxProgram) {
+        skyboxProgram->bind();
+        scene.renderAll(*skyboxProgram);
+        skyboxProgram->release();
+    }
+    glDepthMask(GL_TRUE); // Включаем запись глубины обратно
+
+    // Рендерим обычные объекты
     if (program) {
         program->bind();
         scene.renderAll(*program);

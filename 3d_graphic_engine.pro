@@ -17,6 +17,7 @@ SOURCES += \
     scene.cpp \
     shadermanager.cpp \
     shape.cpp \
+    skybox.cpp \
     texturemanager.cpp
 
 HEADERS += \
@@ -27,6 +28,7 @@ HEADERS += \
     scene.h \
     shadermanager.h \
     shape.h \
+    skybox.h \
     texturemanager.h
 
 FORMS += \
@@ -45,4 +47,5 @@ DISTFILES += \
 
 RESOURCES += \
     shaders.qrc \
+    skyboxes.qrc \
     textures.qrc

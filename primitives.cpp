@@ -435,7 +435,6 @@ void Cylinder::setupVertices()
     float sectorStep = 2 * PI / sectors;
     float stackHeight = height / stacks;
 
-    // 1. Боковая поверхность
     for(int i = 0; i <= stacks; ++i) {
         float y = -height / 2.0f + i * stackHeight;
 
@@ -444,10 +443,8 @@ void Cylinder::setupVertices()
             float x = radius * cosf(sectorAngle);
             float z = radius * sinf(sectorAngle);
 
-            // Нормаль направлена наружу
             QVector3D normal(cosf(sectorAngle), 0.0f, sinf(sectorAngle));
 
-            // Текстурные координаты
             float s = (float)j / sectors;
             float t = (float)i / stacks;
 
@@ -459,33 +456,27 @@ void Cylinder::setupVertices()
         }
     }
 
-    // Индексы для боковой поверхности
     for(int i = 0; i < stacks; ++i) {
         int k1 = i * (sectors + 1);
         int k2 = k1 + sectors + 1;
 
         for(int j = 0; j < sectors; ++j, ++k1, ++k2) {
-            // Первый треугольник
             indices.append(k1);
             indices.append(k1 + 1);
             indices.append(k2);
 
-            // Второй треугольник
             indices.append(k2);
             indices.append(k1 + 1);
             indices.append(k2 + 1);
         }
     }
 
-    // 2. Верхняя крышка
     int baseIndexTop = vertices.size();
     float yTop = height / 2.0f;
 
-    // Центр верхней крышки
     vertices.append(
         VertexData(QVector3D(0.0f, yTop, 0.0f), QVector2D(0.5f, 0.5f), QVector3D(0.0f, 1.0f, 0.0f)));
 
-    // Вершины верхней крышки
     for (int j = 0; j <= sectors; ++j) {
         float sectorAngle = j * sectorStep;
         float x = radius * cosf(sectorAngle);
@@ -497,25 +488,21 @@ void Cylinder::setupVertices()
                        QVector3D(0.0f, 1.0f, 0.0f)));
                     }
 
-                    // Индексы верхней крышки
                     for(int j = 0; j < sectors; ++j) {
                         indices.append(baseIndexTop);
                         indices.append(baseIndexTop + j + 2);
                         indices.append(baseIndexTop + j + 1);
                     }
 
-                    // 3. Нижняя крышка
                     int baseIndexBottom = vertices.size();
                     float yBottom = -height / 2.0f;
 
-                    // Центр нижней крышки
                     vertices.append(VertexData(
                         QVector3D(0.0f, yBottom, 0.0f),
                         QVector2D(0.5f, 0.5f),
                         QVector3D(0.0f, -1.0f, 0.0f)
                         ));
 
-                    // Вершины нижней крышки
                     for(int j = 0; j <= sectors; ++j) {
                         float sectorAngle = j * sectorStep;
                         float x = radius * cosf(sectorAngle);
@@ -529,14 +516,12 @@ void Cylinder::setupVertices()
                             ));
                     }
 
-                    // Индексы нижней крышки (по часовой стрелке)
                     for(int j = 0; j < sectors; ++j) {
                         indices.append(baseIndexBottom);
                         indices.append(baseIndexBottom + j + 1);
                         indices.append(baseIndexBottom + j + 2);
                     }
 
-                    // Заполняем буферы
                     vertexBuffer.bind();
                     vertexBuffer.allocate(vertices.constData(), vertices.size() * sizeof(VertexData));
                     vertexBuffer.release();
