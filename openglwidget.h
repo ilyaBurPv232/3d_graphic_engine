@@ -38,6 +38,9 @@ private:
     int frameCount;
     qint64 lastTime;
 
+    QElapsedTimer frameTimer;
+    float deltaTime = 0.0f;
+
 signals:
     void fpsUpdated(int fps);
 

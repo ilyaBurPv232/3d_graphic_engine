@@ -17,6 +17,8 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     fpsTimer->start(100); // Обновление раз в секунду
 
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
+
+    QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
 OpenGLWidget::~OpenGLWidget()
@@ -47,6 +49,7 @@ void OpenGLWidget::initializeGL()
     glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
+
     if (!ShaderManager::instance().loadShaderProgram("default",
                                                      ":/shaders/vshader.vsh",
                                                      ":/shaders/fshader.fsh")) {
@@ -59,6 +62,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
     TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
+    TextureManager::instance().loadTexture(":/textures/water.png", "water");
 
     Cube* cube = new Cube("magma");
     cube->initialize();
@@ -79,6 +83,12 @@ void OpenGLWidget::initializeGL()
     sphere->setRotation(90, QVector3D(0,1,0));
     scene.addShape(sphere);
 
+    Cylinder *cylinder = new Cylinder("water", 0.5f, 1.0f);
+    cylinder->initialize();
+    cylinder->setPosition(QVector3D(2.5f, 0.0f, 0.0f));
+    cylinder->setRotation(90, QVector3D(0, 1, 0));
+    scene.addShape(cylinder);
+
     cameraController->updateCamera();
 }
 
@@ -92,6 +102,8 @@ void OpenGLWidget::paintGL()
 {
     frameCount++;
 
+    deltaTime = frameTimer.restart() / 1000.0f;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (program) {
@@ -99,6 +111,8 @@ void OpenGLWidget::paintGL()
         scene.renderAll(*program);
         program->release();
     }
+
+    QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
 void OpenGLWidget::mousePressEvent(QMouseEvent* event)
