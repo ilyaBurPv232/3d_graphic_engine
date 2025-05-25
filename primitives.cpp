@@ -5,41 +5,45 @@
 #include <QOpenGLTexture>
 #include <cmath>
 
-Cube::Cube(const QString& textureName) : textureName(textureName) {
+Cube::Cube(const QString &textureName)
+    : textureName(textureName)
+{
     setupVertices();
 }
 
-void Cube::initialize() {
+void Cube::initialize()
+{
     if (!TextureManager::instance().contains(textureName)) {
         TextureManager::instance().loadTexture(":/textures/grass.png", textureName);
     }
 }
 
-void Cube::setupVertices() {
+void Cube::setupVertices()
+{
     float w_div_2 = 0.5f;
     QVector<VertexData> vertexes;
 
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2),  // верх-лево
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2), // верх-лево
                                QVector2D(0.0f, 1.0f),
                                QVector3D(0.0f, 0.0f, 1.0f)));
     vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, w_div_2), // низ-лево
                                QVector2D(0.0f, 0.0f),
                                QVector3D(0.0f, 0.0f, 1.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2),    // верх-право
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2), // верх-право
                                QVector2D(1.0f, 1.0f),
                                QVector3D(0.0f, 0.0f, 1.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2),   // низ-право
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2), // низ-право
                                QVector2D(1.0f, 0.0f),
                                QVector3D(0.0f, 0.0f, 1.0f)));
 
     // Задняя грань (Z-)
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2),   // верх-право
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2), // верх-право
                                QVector2D(1.0f, 1.0f),
                                QVector3D(0.0f, 0.0f, -1.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2),  // низ-право
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2), // низ-право
                                QVector2D(1.0f, 0.0f),
                                QVector3D(0.0f, 0.0f, -1.0f)));
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2),  // верх-лево
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2), // верх-лево
                                QVector2D(0.0f, 1.0f),
                                QVector3D(0.0f, 0.0f, -1.0f)));
     vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, -w_div_2), // низ-лево
@@ -47,58 +51,58 @@ void Cube::setupVertices() {
                                QVector3D(0.0f, 0.0f, -1.0f)));
 
     // Левая грань (X-)
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2),  // верх-зад
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2), // верх-зад
                                QVector2D(0.0f, 1.0f),
                                QVector3D(-1.0f, 0.0f, 0.0f)));
     vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, -w_div_2), // низ-зад
                                QVector2D(0.0f, 0.0f),
                                QVector3D(-1.0f, 0.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2),   // верх-перед
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2), // верх-перед
                                QVector2D(1.0f, 1.0f),
                                QVector3D(-1.0f, 0.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, w_div_2),  // низ-перед
+    vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, w_div_2), // низ-перед
                                QVector2D(1.0f, 0.0f),
                                QVector3D(-1.0f, 0.0f, 0.0f)));
 
     // Правая грань (X+)
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2),    // верх-перед
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2), // верх-перед
                                QVector2D(0.0f, 1.0f),
                                QVector3D(1.0f, 0.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2),   // низ-перед
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2), // низ-перед
                                QVector2D(0.0f, 0.0f),
                                QVector3D(1.0f, 0.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2),   // верх-зад
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2), // верх-зад
                                QVector2D(1.0f, 1.0f),
                                QVector3D(1.0f, 0.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2),  // низ-зад
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2), // низ-зад
                                QVector2D(1.0f, 0.0f),
                                QVector3D(1.0f, 0.0f, 0.0f)));
 
     // Верхняя грань (Y+)
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2),  // зад-лево
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, -w_div_2), // зад-лево
                                QVector2D(0.0f, 1.0f),
                                QVector3D(0.0f, 1.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2),   // перед-лево
+    vertexes.append(VertexData(QVector3D(-w_div_2, w_div_2, w_div_2), // перед-лево
                                QVector2D(0.0f, 0.0f),
                                QVector3D(0.0f, 1.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2),   // зад-право
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, -w_div_2), // зад-право
                                QVector2D(1.0f, 1.0f),
                                QVector3D(0.0f, 1.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2),    // перед-право
+    vertexes.append(VertexData(QVector3D(w_div_2, w_div_2, w_div_2), // перед-право
                                QVector2D(1.0f, 0.0f),
                                QVector3D(0.0f, 1.0f, 0.0f)));
 
     // Нижняя грань (Y-)
-    vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, w_div_2),  // перед-лево
+    vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, w_div_2), // перед-лево
                                QVector2D(0.0f, 1.0f),
                                QVector3D(0.0f, -1.0f, 0.0f)));
     vertexes.append(VertexData(QVector3D(-w_div_2, -w_div_2, -w_div_2), // зад-лево
                                QVector2D(0.0f, 0.0f),
                                QVector3D(0.0f, -1.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2),   // перед-право
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, w_div_2), // перед-право
                                QVector2D(1.0f, 1.0f),
                                QVector3D(0.0f, -1.0f, 0.0f)));
-    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2),  // зад-право
+    vertexes.append(VertexData(QVector3D(w_div_2, -w_div_2, -w_div_2), // зад-право
                                QVector2D(1.0f, 0.0f),
                                QVector3D(0.0f, -1.0f, 0.0f)));
 
@@ -126,10 +130,11 @@ void Cube::setupVertices() {
     indexBuffer.release();
 }
 
-void Cube::render(QOpenGLShaderProgram& program) {
+void Cube::render(QOpenGLShaderProgram &program)
+{
     program.setUniformValue("model", modelMatrix);
 
-    QOpenGLTexture* texture = TextureManager::instance().getTexture(textureName);
+    QOpenGLTexture *texture = TextureManager::instance().getTexture(textureName);
     if (texture) {
         texture->bind();
         program.setUniformValue("ourTexture", 0);
@@ -140,26 +145,40 @@ void Cube::render(QOpenGLShaderProgram& program) {
 
     int posLoc = program.attributeLocation("aPos");
     program.enableAttributeArray(posLoc);
-    program.setAttributeBuffer(posLoc, GL_FLOAT, offsetof(VertexData, position), 3, sizeof(VertexData));
+    program.setAttributeBuffer(posLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, position),
+                               3,
+                               sizeof(VertexData));
 
     int texLoc = program.attributeLocation("aTexCoord");
     program.enableAttributeArray(texLoc);
-    program.setAttributeBuffer(texLoc, GL_FLOAT, offsetof(VertexData, texCoord), 2, sizeof(VertexData));
+    program.setAttributeBuffer(texLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, texCoord),
+                               2,
+                               sizeof(VertexData));
 
     int normalLoc = program.attributeLocation("aNormal");
     if (normalLoc != -1) {
         program.enableAttributeArray(normalLoc);
-        program.setAttributeBuffer(normalLoc, GL_FLOAT, offsetof(VertexData, normal), 3, sizeof(VertexData));
+        program.setAttributeBuffer(normalLoc,
+                                   GL_FLOAT,
+                                   offsetof(VertexData, normal),
+                                   3,
+                                   sizeof(VertexData));
     }
 
     glDrawElements(GL_TRIANGLES, indexBuffer.size(), GL_UNSIGNED_INT, 0);
 
     vertexBuffer.release();
     indexBuffer.release();
-    if (texture) texture->release();
+    if (texture)
+        texture->release();
 }
 
-Pyramid::Pyramid(const QString& textureName) : textureName(textureName)
+Pyramid::Pyramid(const QString &textureName)
+    : textureName(textureName)
 {
     setupVertices();
 }
@@ -176,72 +195,94 @@ void Pyramid::setupVertices()
     QVector<VertexData> vertexes;
 
     // Основание пирамиды (4 вершины)
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, -0.5f), QVector2D(0.0f, 0.0f), QVector3D(0.0f, -1.0f, 0.0f)));  // 0
-    vertexes.append(VertexData(QVector3D( 0.5f, -0.5f, -0.5f), QVector2D(1.0f, 0.0f), QVector3D(0.0f, -1.0f, 0.0f)));  // 1
-    vertexes.append(VertexData(QVector3D( 0.5f, -0.5f,  0.5f), QVector2D(1.0f, 1.0f), QVector3D(0.0f, -1.0f, 0.0f)));  // 2
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f,  0.5f), QVector2D(0.0f, 1.0f), QVector3D(0.0f, -1.0f, 0.0f)));  // 3
+    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, -0.5f),
+                               QVector2D(0.0f, 0.0f),
+                               QVector3D(0.0f, -1.0f, 0.0f))); // 0
+    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, -0.5f),
+                               QVector2D(1.0f, 0.0f),
+                               QVector3D(0.0f, -1.0f, 0.0f))); // 1
+    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, 0.5f),
+                               QVector2D(1.0f, 1.0f),
+                               QVector3D(0.0f, -1.0f, 0.0f))); // 2
+    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, 0.5f),
+                               QVector2D(0.0f, 1.0f),
+                               QVector3D(0.0f, -1.0f, 0.0f))); // 3
 
     // Вершина пирамиды (центр верхней точки)
     const QVector3D top(0.0f, 0.5f, 0.0f);
 
     // Передняя грань (Z+)
-    QVector3D frontNormal = QVector3D::crossProduct(
-                                QVector3D(-0.5f, -0.5f, 0.5f) - top,
-                                QVector3D(0.5f, -0.5f, 0.5f) - top
-                                ).normalized();
+    QVector3D frontNormal = QVector3D::crossProduct(QVector3D(-0.5f, -0.5f, 0.5f) - top,
+                                                    QVector3D(0.5f, -0.5f, 0.5f) - top)
+                                .normalized();
 
-    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), frontNormal));  // 4
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, 0.5f), QVector2D(0.0f, 0.0f), frontNormal));  // 5
-    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, 0.5f), QVector2D(1.0f, 0.0f), frontNormal));   // 6
+    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), frontNormal)); // 4
+    vertexes.append(
+        VertexData(QVector3D(-0.5f, -0.5f, 0.5f), QVector2D(0.0f, 0.0f), frontNormal)); // 5
+    vertexes.append(
+        VertexData(QVector3D(0.5f, -0.5f, 0.5f), QVector2D(1.0f, 0.0f), frontNormal)); // 6
 
     // Правая грань (X+)
-    QVector3D rightNormal = QVector3D::crossProduct(
-                                QVector3D(0.5f, -0.5f, 0.5f) - top,
-                                QVector3D(0.5f, -0.5f, -0.5f) - top
-                                ).normalized();
+    QVector3D rightNormal = QVector3D::crossProduct(QVector3D(0.5f, -0.5f, 0.5f) - top,
+                                                    QVector3D(0.5f, -0.5f, -0.5f) - top)
+                                .normalized();
 
-    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), rightNormal));  // 7
-    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, 0.5f), QVector2D(0.0f, 0.0f), rightNormal));  // 8
-    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, -0.5f), QVector2D(1.0f, 0.0f), rightNormal)); // 9
+    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), rightNormal)); // 7
+    vertexes.append(
+        VertexData(QVector3D(0.5f, -0.5f, 0.5f), QVector2D(0.0f, 0.0f), rightNormal)); // 8
+    vertexes.append(
+        VertexData(QVector3D(0.5f, -0.5f, -0.5f), QVector2D(1.0f, 0.0f), rightNormal)); // 9
 
     // Задняя грань (Z-)
-    QVector3D backNormal = QVector3D::crossProduct(
-                               QVector3D(0.5f, -0.5f, -0.5f) - top,
-                               QVector3D(-0.5f, -0.5f, -0.5f) - top
-                               ).normalized();
+    QVector3D backNormal = QVector3D::crossProduct(QVector3D(0.5f, -0.5f, -0.5f) - top,
+                                                   QVector3D(-0.5f, -0.5f, -0.5f) - top)
+                               .normalized();
 
-    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), backNormal));   // 10
-    vertexes.append(VertexData(QVector3D(0.5f, -0.5f, -0.5f), QVector2D(0.0f, 0.0f), backNormal));  // 11
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, -0.5f), QVector2D(1.0f, 0.0f), backNormal)); // 12
+    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), backNormal)); // 10
+    vertexes.append(
+        VertexData(QVector3D(0.5f, -0.5f, -0.5f), QVector2D(0.0f, 0.0f), backNormal)); // 11
+    vertexes.append(
+        VertexData(QVector3D(-0.5f, -0.5f, -0.5f), QVector2D(1.0f, 0.0f), backNormal)); // 12
 
     // Левая грань (X-)
-    QVector3D leftNormal = QVector3D::crossProduct(
-                               QVector3D(-0.5f, -0.5f, -0.5f) - top,
-                               QVector3D(-0.5f, -0.5f, 0.5f) - top
-                               ).normalized();
+    QVector3D leftNormal = QVector3D::crossProduct(QVector3D(-0.5f, -0.5f, -0.5f) - top,
+                                                   QVector3D(-0.5f, -0.5f, 0.5f) - top)
+                               .normalized();
 
-    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), leftNormal));  // 13
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, -0.5f), QVector2D(0.0f, 0.0f), leftNormal)); // 14
-    vertexes.append(VertexData(QVector3D(-0.5f, -0.5f, 0.5f), QVector2D(1.0f, 0.0f), leftNormal));  // 15
+    vertexes.append(VertexData(top, QVector2D(0.5f, 1.0f), leftNormal)); // 13
+    vertexes.append(
+        VertexData(QVector3D(-0.5f, -0.5f, -0.5f), QVector2D(0.0f, 0.0f), leftNormal)); // 14
+    vertexes.append(
+        VertexData(QVector3D(-0.5f, -0.5f, 0.5f), QVector2D(1.0f, 0.0f), leftNormal)); // 15
 
     // Индексы для треугольников
-    QVector<GLuint> indexes = {
-        // Основание (2 треугольника)
-        0, 1, 2,
-        2, 3, 0,
+    QVector<GLuint> indexes = {// Основание (2 треугольника)
+                               0,
+                               1,
+                               2,
+                               2,
+                               3,
+                               0,
 
-        // Передняя грань
-        4, 5, 6,
+                               // Передняя грань
+                               4,
+                               5,
+                               6,
 
-        // Правая грань
-        7, 8, 9,
+                               // Правая грань
+                               7,
+                               8,
+                               9,
 
-        // Задняя грань
-        10, 11, 12,
+                               // Задняя грань
+                               10,
+                               11,
+                               12,
 
-        // Левая грань
-        13, 14, 15
-    };
+                               // Левая грань
+                               13,
+                               14,
+                               15};
 
     vertexBuffer.create();
     vertexBuffer.bind();
@@ -254,11 +295,11 @@ void Pyramid::setupVertices()
     indexBuffer.release();
 }
 
-void Pyramid::render(QOpenGLShaderProgram& program)
+void Pyramid::render(QOpenGLShaderProgram &program)
 {
     program.setUniformValue("model", modelMatrix);
 
-    QOpenGLTexture* texture = TextureManager::instance().getTexture(textureName);
+    QOpenGLTexture *texture = TextureManager::instance().getTexture(textureName);
     if (texture) {
         texture->bind();
         program.setUniformValue("ourTexture", 0);
@@ -269,28 +310,43 @@ void Pyramid::render(QOpenGLShaderProgram& program)
 
     int posLoc = program.attributeLocation("aPos");
     program.enableAttributeArray(posLoc);
-    program.setAttributeBuffer(posLoc, GL_FLOAT, offsetof(VertexData, position), 3, sizeof(VertexData));
+    program.setAttributeBuffer(posLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, position),
+                               3,
+                               sizeof(VertexData));
 
     int texLoc = program.attributeLocation("aTexCoord");
     program.enableAttributeArray(texLoc);
-    program.setAttributeBuffer(texLoc, GL_FLOAT, offsetof(VertexData, texCoord), 2, sizeof(VertexData));
+    program.setAttributeBuffer(texLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, texCoord),
+                               2,
+                               sizeof(VertexData));
 
     int normalLoc = program.attributeLocation("aNormal");
     if (normalLoc != -1) {
         program.enableAttributeArray(normalLoc);
-        program.setAttributeBuffer(normalLoc, GL_FLOAT, offsetof(VertexData, normal), 3, sizeof(VertexData));
+        program.setAttributeBuffer(normalLoc,
+                                   GL_FLOAT,
+                                   offsetof(VertexData, normal),
+                                   3,
+                                   sizeof(VertexData));
     }
 
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
 
     vertexBuffer.release();
     indexBuffer.release();
-    if (texture) texture->release();
+    if (texture)
+        texture->release();
 }
 
-
-Sphere::Sphere(const QString& textureName, float radius, int sectors, int stacks)
-    : textureName(textureName), radius(radius), sectors(sectors), stacks(stacks)
+Sphere::Sphere(const QString &textureName, float radius, int sectors, int stacks)
+    : textureName(textureName)
+    , radius(radius)
+    , sectors(sectors)
+    , stacks(stacks)
 {
     setupVertices();
 }
@@ -316,14 +372,12 @@ void Sphere::setupVertices()
     float stackStep = PI / stacks;
     float sectorAngle, stackAngle;
 
-    for(int i = 0; i <= stacks; ++i)
-    {
+    for (int i = 0; i <= stacks; ++i) {
         stackAngle = PI / 2 - i * stackStep;
         xy = radius * cosf(stackAngle);
         z = radius * sinf(stackAngle);
 
-        for(int j = 0; j <= sectors; ++j)
-        {
+        for (int j = 0; j <= sectors; ++j) {
             sectorAngle = j * sectorStep;
 
             x = xy * cosf(sectorAngle);
@@ -333,34 +387,26 @@ void Sphere::setupVertices()
             ny = y * lengthInv;
             nz = z * lengthInv;
 
-            s = (float)j / sectors;
-            t = (float)i / stacks;
+            s = (float) j / sectors;
+            t = (float) i / stacks;
 
-            vertices.append(VertexData(
-                QVector3D(x, y, z),
-                QVector2D(s, t),
-                QVector3D(nx, ny, nz)
-                ));
+            vertices.append(VertexData(QVector3D(x, y, z), QVector2D(s, t), QVector3D(nx, ny, nz)));
         }
     }
 
     int k1, k2;
-    for(int i = 0; i < stacks; ++i)
-    {
+    for (int i = 0; i < stacks; ++i) {
         k1 = i * (sectors + 1);
         k2 = k1 + sectors + 1;
 
-        for(int j = 0; j < sectors; ++j, ++k1, ++k2)
-        {
-            if(i != 0)
-            {
+        for (int j = 0; j < sectors; ++j, ++k1, ++k2) {
+            if (i != 0) {
                 indices.append(k1);
                 indices.append(k2);
                 indices.append(k1 + 1);
             }
 
-            if(i != (stacks-1))
-            {
+            if (i != (stacks - 1)) {
                 indices.append(k1 + 1);
                 indices.append(k2);
                 indices.append(k2 + 1);
@@ -379,11 +425,11 @@ void Sphere::setupVertices()
     indexBuffer.release();
 }
 
-void Sphere::render(QOpenGLShaderProgram& program)
+void Sphere::render(QOpenGLShaderProgram &program)
 {
     program.setUniformValue("model", modelMatrix);
 
-    QOpenGLTexture* texture = TextureManager::instance().getTexture(textureName);
+    QOpenGLTexture *texture = TextureManager::instance().getTexture(textureName);
     if (texture) {
         texture->bind();
         program.setUniformValue("ourTexture", 0);
@@ -394,21 +440,34 @@ void Sphere::render(QOpenGLShaderProgram& program)
 
     int posLoc = program.attributeLocation("aPos");
     program.enableAttributeArray(posLoc);
-    program.setAttributeBuffer(posLoc, GL_FLOAT, offsetof(VertexData, position), 3, sizeof(VertexData));
+    program.setAttributeBuffer(posLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, position),
+                               3,
+                               sizeof(VertexData));
 
     int texLoc = program.attributeLocation("aTexCoord");
     program.enableAttributeArray(texLoc);
-    program.setAttributeBuffer(texLoc, GL_FLOAT, offsetof(VertexData, texCoord), 2, sizeof(VertexData));
+    program.setAttributeBuffer(texLoc,
+                               GL_FLOAT,
+                               offsetof(VertexData, texCoord),
+                               2,
+                               sizeof(VertexData));
 
     int normalLoc = program.attributeLocation("aNormal");
     if (normalLoc != -1) {
         program.enableAttributeArray(normalLoc);
-        program.setAttributeBuffer(normalLoc, GL_FLOAT, offsetof(VertexData, normal), 3, sizeof(VertexData));
+        program.setAttributeBuffer(normalLoc,
+                                   GL_FLOAT,
+                                   offsetof(VertexData, normal),
+                                   3,
+                                   sizeof(VertexData));
     }
 
     glDrawElements(GL_TRIANGLES, indexBuffer.size(), GL_UNSIGNED_INT, 0);
 
     vertexBuffer.release();
     indexBuffer.release();
-    if (texture) texture->release();
+    if (texture)
+        texture->release();
 }

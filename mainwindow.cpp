@@ -1,6 +1,6 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "openglwidget.h"
+#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,17 +19,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->setTabText(0, "3D View");
 
     // Настраиваем FPS-лейбл
-    ui->fps_counter->setParent(glWidget); // Делаем glWidget родителем
+    ui->fps_counter->setParent(glWidget);          // Делаем glWidget родителем
     ui->fps_counter->setGeometry(10, 10, 100, 20); // Позиция и размер
-    ui->fps_counter->setStyleSheet(
-        "QLabel {"
-        "   color: white;"
-        "   font-weight: bold;"
-        "   background-color: rgba(0, 0, 0, 150);"
-        "   padding: 2px;"
-        "   border-radius: 3px;"
-        "}"
-        );
+    ui->fps_counter->setStyleSheet("QLabel {"
+                                   "   color: white;"
+                                   "   font-weight: bold;"
+                                   "   background-color: rgba(0, 0, 0, 150);"
+                                   "   padding: 2px;"
+                                   "   border-radius: 3px;"
+                                   "}");
     ui->fps_counter->raise(); // Поднимаем на передний план
     ui->fps_counter->show();
 

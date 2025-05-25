@@ -1,13 +1,15 @@
 #include "openglwidget.h"
-#include "shadermanager.h"
-#include "texturemanager.h"
-#include "primitives.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include "primitives.h"
+#include "shadermanager.h"
+#include "texturemanager.h"
 
-OpenGLWidget::OpenGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent), frameCount(0), lastTime(0)
+OpenGLWidget::OpenGLWidget(QWidget *parent)
+    : QOpenGLWidget(parent)
+    , frameCount(0)
+    , lastTime(0)
 {
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
@@ -16,7 +18,10 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     connect(fpsTimer, &QTimer::timeout, this, &OpenGLWidget::updateFPS);
     fpsTimer->start(100); // Обновление раз в секунду
 
-    connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
+    connect(cameraController,
+            &CameraController::cameraUpdated,
+            this,
+            QOverload<>::of(&OpenGLWidget::update));
 }
 
 OpenGLWidget::~OpenGLWidget()
@@ -58,25 +63,24 @@ void OpenGLWidget::initializeGL()
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
-    TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
+    TextureManager::instance().loadTexture(":/textures/water.png", "cubes");
 
-    Cube* cube = new Cube("magma");
+    Cube *cube = new Cube("magma");
     cube->initialize();
-    cube->setScale(QVector3D (1.5f,1.5f,1.5f));
+    cube->setScale(QVector3D(1.5f, 1.5f, 1.5f));
     cube->setPosition(QVector3D(1.0f, 0.0f, 0.0f));
     scene.addShape(cube);
 
-
-    Pyramid* pyramid = new Pyramid("wood");
+    Pyramid *pyramid = new Pyramid("wood");
     pyramid->initialize();
     pyramid->setPosition(QVector3D(1.0f, 1.35f, 0.0f));
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
 
-    Sphere* sphere = new Sphere("cubes", 0.8f);
+    Sphere *sphere = new Sphere("cubes", 0.8f);
     sphere->initialize();
     sphere->setPosition(QVector3D(-1.0f, 0.0f, 0.0f));
-    sphere->setRotation(90, QVector3D(0,1,0));
+    sphere->setRotation(180, QVector3D(0, -1, 1));
     scene.addShape(sphere);
 
     cameraController->updateCamera();
@@ -101,25 +105,25 @@ void OpenGLWidget::paintGL()
     }
 }
 
-void OpenGLWidget::mousePressEvent(QMouseEvent* event)
+void OpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
     cameraController->mousePressEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::mouseMoveEvent(QMouseEvent* event)
+void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
     cameraController->mouseMoveEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event)
+void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     cameraController->mouseReleaseEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::wheelEvent(QWheelEvent* event)
+void OpenGLWidget::wheelEvent(QWheelEvent *event)
 {
     cameraController->wheelEvent(event);
     event->accept();
