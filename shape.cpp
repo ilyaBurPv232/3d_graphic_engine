@@ -38,3 +38,15 @@ void Shape::updateModelMatrix()
     modelMatrix.rotate(rotationQuat);
     modelMatrix.scale(scaleFactor);
 }
+
+QMatrix4x4 Shape::getModelMatrix() const {
+    return modelMatrix;
+}
+
+QVector3D Shape::getScale() const {
+    return scaleFactor;
+}
+
+QVector3D Shape::getPosition() const {
+    return position;
+}

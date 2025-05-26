@@ -35,6 +35,12 @@ public:
     void setPosition(const QVector3D &position);
     void setRotation(float angle, const QVector3D &axis);
     void setScale(const QVector3D &scale);
+    QVector3D getPosition() const;
+    virtual QVector<VertexData> getVertices() const = 0;
+    QMatrix4x4 getModelMatrix() const;
+    QVector3D getScale() const;
+    // virtual QVector<QVector3D> getTransformedVertices() const = 0;
+    // virtual void getAABB(QVector3D &min, QVector3D &max) const = 0;
 
 protected:
     void updateModelMatrix();
