@@ -105,6 +105,8 @@ QVector<CollisionInfo> CollisionDetector::detectCollisions(const QVector<Physica
                 info.collisionNormal = collisionNormal;
                 info.penetrationDepth = penetrationDepth;
                 collisions.append(info);
+                a->setPosition(QVector3D(a->getPosition().x() + 1.0f, a->getPosition().y() + 0.0f, a->getPosition().z() + 0.0f));
+                a->update(100);
 
                 qDebug() << "Collision detected between shapes at positions:"
                          << a->getPosition() << "and" << b->getPosition()

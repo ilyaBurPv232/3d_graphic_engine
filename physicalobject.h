@@ -20,6 +20,7 @@ public:
     QVector3D getPosition() const;
     Shape* getShape() const;
     bool isStatic() const;
+    double getInverseMass() const;
 
     // Сеттеры
     void setVelocity(const QVector3D& newVelocity);

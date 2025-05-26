@@ -44,6 +44,8 @@ bool PhysicalObject::isStatic() const {
     return isStaticObject;
 }
 
+
+
 // Сеттеры
 void PhysicalObject::setVelocity(const QVector3D& newVelocity) {
     velocity = newVelocity;
@@ -71,7 +73,7 @@ void PhysicalObject::setStatic(bool staticFlag) {
 }
 
 void PhysicalObject::setPosition(const QVector3D& position) {
-    if (shape) shape->setPosition(position);
+    this->shape->setPosition(position);
 }
 
 // Применение силы (добавляется в аккумулятор)
@@ -98,7 +100,7 @@ void PhysicalObject::update(float deltaTime) {
 
     // Применение скорости к позиции
     QVector3D newPosition = shape->getPosition() + velocity * deltaTime;
-    shape->setPosition(newPosition);
+    this->setPosition(newPosition);
 
     // Сброс аккумулятора сил
     forceAccumulator = QVector3D(0, 0, 0);
