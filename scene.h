@@ -5,6 +5,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 #include "shape.h"
+#include "skybox.h"
 
 class Scene
 {
@@ -15,6 +16,9 @@ public:
 
     void addShape(Shape* shape);
     void renderAll(QOpenGLShaderProgram& program);
+
+    void setSkybox(Skybox* skybox_new);
+    void renderSkybox(QOpenGLShaderProgram& program);
 
     QMatrix4x4 getViewMatrix() const;
     QMatrix4x4 getProjectionMatrix() const;
@@ -29,8 +33,11 @@ public:
     const QVector<Shape*>& getShapes() const { return shapes; }
 
 
+
+
 private:
     QVector<Shape*> shapes;
+    Skybox *skybox;
     QMatrix4x4 projection;
     QMatrix4x4 view;
 

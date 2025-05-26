@@ -71,6 +71,8 @@ void OpenGLWidget::initializeGL()
     }
 
     program = ShaderManager::instance().getShaderProgram("default");
+    skyBoxProgram = ShaderManager::instance().getShaderProgram("skybox");
+
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
@@ -79,8 +81,9 @@ void OpenGLWidget::initializeGL()
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
-    skybox->setScale(QVector3D(500, 500, 500));
-    scene.addShape(skybox);
+    skybox->setScale(QVector3D(1000, 1000, 1000));
+    skybox->setRotation(180, QVector3D(0, 1, 0));
+    scene.setSkybox(skybox);
 
     Cube *cube = new Cube("magma");
     cube->initialize();
@@ -108,6 +111,11 @@ void OpenGLWidget::initializeGL()
     cameraController->updateCamera();
 }
 
+void OpenGLWidget::initShaders() {
+
+
+}
+
 void OpenGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
@@ -117,22 +125,22 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     frameCount++;
+
     deltaTime = frameTimer.restart() / 1000.0f;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glDepthMask(GL_FALSE);
-    QOpenGLShaderProgram* skyboxProgram = ShaderManager::instance().getShaderProgram("skybox");
-    if (skyboxProgram) {
-        skyboxProgram->bind();
-        scene.renderAll(*skyboxProgram);
-        skyboxProgram->release();
+    glDepthFunc(GL_LEQUAL);
+    if (skyBoxProgram) {
+        skyBoxProgram->bind();
+        scene.renderSkybox(*skyBoxProgram);
+        skyBoxProgram->release();
+
     }
-    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
 
     if (program) {
         program->bind();
-
         program->setUniformValue("lightPos", light->position());
         program->setUniformValue("viewPos", scene.getCameraPosition());
         program->setUniformValue("lightColor", light->color());

@@ -30,6 +30,26 @@ void Scene::renderAll(QOpenGLShaderProgram& program) {
     program.release();
 }
 
+void Scene::setSkybox(Skybox *skybox_new) {
+    skybox = skybox_new;
+}
+
+void Scene::renderSkybox(QOpenGLShaderProgram &program) {
+    program.bind();
+
+    view.setToIdentity();
+    view.lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+    QMatrix4x4 viewWithoutTranslation = view;
+    viewWithoutTranslation.setColumn(3, QVector4D(0, 0, 0, 1));
+    program.setUniformValue("view", viewWithoutTranslation);
+    program.setUniformValue("projection", projection);
+
+    skybox->render(program);
+
+    program.release();
+}
+
 QMatrix4x4 Scene::getViewMatrix() const {
     return view;
 }

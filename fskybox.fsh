@@ -1,12 +1,10 @@
 #version 330 core
-in vec3 TexCoord;
-out vec4 FragColor;
+uniform sampler2D skyTexture;
+in vec2 TexCoord;
 
-uniform sampler2D ourTexture;
+out vec4 FragColor;
 
 void main()
 {
-    FragColor = texture(ourTexture, TexCoord.xy);
-
-    gl_FragDepth = 1.0;
+    FragColor = texture(skyTexture, TexCoord);
 }

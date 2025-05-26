@@ -14,7 +14,7 @@ void Skybox::initialize() {
 
 void Skybox::setupVertices() {
     float w_div_2 = 0.5f;
-    float border = 0.002f; // Небольшой отступ от краев текстуры
+    float border = 0.0003f; // Небольшой отступ от краев текстуры
     QVector<VertexData> vertexes;
 
     // Позади нас
@@ -131,7 +131,7 @@ void Skybox::render(QOpenGLShaderProgram& program) {
     QOpenGLTexture* texture = TextureManager::instance().getTexture(textureName);
     if (texture) {
         texture->bind();
-        program.setUniformValue("ourTexture", 0);
+        program.setUniformValue("skyTexture", 0);
     }
 
     vertexBuffer.bind();
