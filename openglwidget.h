@@ -39,12 +39,14 @@ private:
 
     QTimer *fpsTimer;
     int frameCount;
+    float animCounter;
     qint64 lastTime;
 
     QElapsedTimer frameTimer;
     float deltaTime = 0.0f;
 
     Light* light;
+
 
 signals:
     void fpsUpdated(int fps);

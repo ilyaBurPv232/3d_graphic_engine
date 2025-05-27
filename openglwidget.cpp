@@ -31,23 +31,22 @@ OpenGLWidget::~OpenGLWidget()
 
 void OpenGLWidget::updateFPS()
 {
-    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
-    if (lastTime == 0) {
-        lastTime = currentTime;
-        return;
-    }
+    static QVector<int> fpsHistory;
+    fpsHistory.append(frameCount * 1000 / fpsTimer->interval());
+    if (fpsHistory.size() > 10) fpsHistory.removeFirst();
 
-    int fps = frameCount * 1000 / (currentTime - lastTime);
+    int avgFPS = std::accumulate(fpsHistory.begin(), fpsHistory.end(), 0) / fpsHistory.size();
+    emit fpsUpdated(avgFPS);
     frameCount = 0;
-    lastTime = currentTime;
-
-    emit fpsUpdated(fps);
 }
 
 void OpenGLWidget::initializeGL()
 {
     light = new Light(this);
     connect(light, &Light::lightChanged, this, QOverload<>::of(&OpenGLWidget::update));
+    light->setColor(QVector3D(0.78f, 0.65f, 0.53f));
+    light->setAmbientStrength(0.5);
+    light->setPosition(QVector3D(-100.0f, 350.0f, 450.0f));
 
     initializeOpenGLFunctions();
     glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
@@ -81,7 +80,7 @@ void OpenGLWidget::initializeGL()
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
-    skybox->setScale(QVector3D(1000, 1000, 1000));
+    skybox->setScale(QVector3D(500, 500, 500));
     skybox->setRotation(180, QVector3D(0, 1, 0));
     scene.setSkybox(skybox);
 
@@ -98,11 +97,10 @@ void OpenGLWidget::initializeGL()
 
     Sphere *sphere = new Sphere("cubes", 0.5f);
     sphere->initialize();
-    sphere->setPosition(QVector3D(-1.5f, 0.0f, 0.0f));
     sphere->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(sphere);
 
-    Cylinder *cylinder = new Cylinder("water", 0.5f, 1.0f);
+    Cylinder *cylinder = new Cylinder("water", 0.45f, 1.0f);
     cylinder->initialize();
     cylinder->setPosition(QVector3D(1.5f, 0.0f, 0.0f));
     cylinder->setRotation(90, QVector3D(0, 1, 0));
@@ -125,6 +123,12 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     frameCount++;
+    animCounter += 0.01f;
+
+    scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, cos(animCounter) * 3, 0));
+    scene.getShapes()[2]->setRotation(1, QVector3D(1, 0, 1));
+    scene.getShapes()[3]->setPosition(QVector3D(sin(animCounter) * 1.9, 0, cos(animCounter) * 2));
+    scene.getShapes()[3]->setRotation(-1, QVector3D(0, 1, 0));
 
     deltaTime = frameTimer.restart() / 1000.0f;
 

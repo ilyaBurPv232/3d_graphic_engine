@@ -2,7 +2,7 @@
 
 Light::Light(QObject* parent)
     : QObject(parent),
-    m_position(-50.0f, 100.0f, 50.0f),
+    m_position(1.0f, 1.0f, 1.0f),
     m_color(1.0f, 1.0f, 1.0f),
     m_ambientStrength(0.1f),
     m_specularStrength(0.5f),
