@@ -8,14 +8,14 @@
 #include <QWheelEvent>
 
 OpenGLWidget::OpenGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent), frameCount(0), lastTime(0)
+    : QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
 
-    fpsTimer = new QTimer(this);
-    connect(fpsTimer, &QTimer::timeout, this, &OpenGLWidget::updateFPS);
-    fpsTimer->start(100);
+    fpsCounter = new FPSCounter(this);
+    connect(this, &OpenGLWidget::frameRendered, fpsCounter, &FPSCounter::frameRendered);
+    connect(fpsCounter, &FPSCounter::fpsUpdated, this, &OpenGLWidget::fpsUpdated);
 
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
 
@@ -29,16 +29,7 @@ OpenGLWidget::~OpenGLWidget()
     doneCurrent();
 }
 
-void OpenGLWidget::updateFPS()
-{
-    static QVector<int> fpsHistory;
-    fpsHistory.append(frameCount * 1000 / fpsTimer->interval());
-    if (fpsHistory.size() > 10) fpsHistory.removeFirst();
 
-    int avgFPS = std::accumulate(fpsHistory.begin(), fpsHistory.end(), 0) / fpsHistory.size();
-    emit fpsUpdated(avgFPS);
-    frameCount = 0;
-}
 
 void OpenGLWidget::initializeGL()
 {
@@ -122,7 +113,7 @@ void OpenGLWidget::resizeGL(int w, int h)
 
 void OpenGLWidget::paintGL()
 {
-    frameCount++;
+    emit frameRendered();
     animCounter += 0.01f;
 
     scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, cos(animCounter) * 3, 0));

@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     cameracontroller.cpp \
+    fpscounter.cpp \
     light.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     cameracontroller.h \
+    fpscounter.h \
     light.h \
     mainwindow.h \
     openglwidget.h \

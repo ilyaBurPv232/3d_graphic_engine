@@ -10,6 +10,7 @@
 #include "scene.h"
 #include "cameracontroller.h"
 #include "light.h"
+#include "fpscounter.h"
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -29,26 +30,24 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
     void wheelEvent(QWheelEvent* event) override;
 
-    void updateFPS();
-
 private:
     QOpenGLShaderProgram *program;
     QOpenGLShaderProgram *skyBoxProgram;
     Scene scene;
     CameraController* cameraController;
 
-    QTimer *fpsTimer;
-    int frameCount;
+
     float animCounter;
-    qint64 lastTime;
 
     QElapsedTimer frameTimer;
     float deltaTime = 0.0f;
 
     Light* light;
 
+    FPSCounter* fpsCounter;
 
 signals:
+    void frameRendered();
     void fpsUpdated(int fps);
 
 };
