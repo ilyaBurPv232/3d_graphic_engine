@@ -44,6 +44,11 @@ void FPSCounter::setStyleSheet(const QString &styleSheet)
     fpsLabel->setStyleSheet(styleSheet);
 }
 
+void FPSCounter::toggleVisibility()
+{
+    fpsLabel->setVisible(!fpsLabel->isVisible());
+}
+
 void FPSCounter::frameRendered()
 {
     frameCount++;

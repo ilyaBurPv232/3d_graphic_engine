@@ -175,3 +175,11 @@ void OpenGLWidget::wheelEvent(QWheelEvent* event)
     cameraController->wheelEvent(event);
     event->accept();
 }
+
+void OpenGLWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_F3) {
+        fpsCounter->toggleVisibility();
+    }
+    QOpenGLWidget::keyPressEvent(event);
+}

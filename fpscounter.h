@@ -16,6 +16,7 @@ public:
     void setVisible(bool visible);
     void setUpdateInterval(int ms);
     void setStyleSheet(const QString &styleSheet);
+    void toggleVisibility();
 
 public slots:
     void frameRendered();
