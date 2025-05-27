@@ -8,19 +8,18 @@ MainWindow::MainWindow(QWidget *parent)
     , glWidget(nullptr)
 {
     ui->setupUi(this);
-    setWindowTitle("3D Cube with Camera");
+    setWindowTitle("3D engine");
 
-    // Создаем OpenGLWidget
     glWidget = new OpenGLWidget(ui->tab);
     QVBoxLayout *tabLayout = new QVBoxLayout(ui->tab);
     tabLayout->addWidget(glWidget);
     ui->tab->setLayout(tabLayout);
 
     ui->tabWidget->setTabText(0, "3D View");
+    ui->tabWidget->setTabText(1, "settings");
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    // OpenGLWidget удалится автоматически, так как он является дочерним виджетом
 }
