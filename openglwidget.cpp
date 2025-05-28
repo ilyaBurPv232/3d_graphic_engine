@@ -44,7 +44,6 @@ void OpenGLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
 
-    // Загружаем обычные шейдеры
     if (!ShaderManager::instance().loadShaderProgram("default",
                                                      ":/shaders/vshader.vsh",
                                                      ":/shaders/fshader.fsh")) {
@@ -52,7 +51,6 @@ void OpenGLWidget::initializeGL()
         return;
     }
 
-    // Загружаем шейдеры для скайбокса
     if (!ShaderManager::instance().loadShaderProgram("skybox",
                                                      ":/shaders/vskybox.vsh",
                                                      ":/shaders/fskybox.fsh")) {
@@ -62,6 +60,16 @@ void OpenGLWidget::initializeGL()
 
     program = ShaderManager::instance().getShaderProgram("default");
     skyBoxProgram = ShaderManager::instance().getShaderProgram("skybox");
+
+    postProcessor = new PostProcessor();
+    postProcessor->initialize(width(), height());
+
+    if (!ShaderManager::instance().loadShaderProgram("postprocessing",
+                                                     ":/shaders/postprocessing.vsh",
+                                                     ":/shaders/postprocessing.fsh")) {
+        qCritical() << "Failed to load postprocessing shaders!";
+    }
+    postProcessingProgram = ShaderManager::instance().getShaderProgram("postprocessing");
 
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
@@ -114,6 +122,10 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     emit frameRendered();
+    postProcessor->beginRender();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
     animCounter += 0.01f;
 
     scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, cos(animCounter) * 3, 0));
@@ -122,8 +134,6 @@ void OpenGLWidget::paintGL()
     scene.getShapes()[3]->setRotation(-1, QVector3D(0, 1, 0));
 
     deltaTime = frameTimer.restart() / 1000.0f;
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDepthFunc(GL_LEQUAL);
     if (skyBoxProgram) {
@@ -147,6 +157,17 @@ void OpenGLWidget::paintGL()
 
         scene.renderAll(*program);
         program->release();
+    }
+
+    postProcessor->endRender();
+
+
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (postProcessingProgram) {
+        postProcessingProgram->bind();
+        postProcessor->applyEffects(*postProcessingProgram);
+        postProcessingProgram->release();
     }
 
     QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
@@ -180,6 +201,11 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_F3) {
         fpsCounter->toggleVisibility();
+    }
+    else if (event->key() == Qt::Key_F2) {
+        bool enabled = !postProcessor->areEffectsEnabled();
+        postProcessor->toggleEffects(enabled);
+        update();
     }
     QOpenGLWidget::keyPressEvent(event);
 }

@@ -4,5 +4,7 @@
         <file>vshader.vsh</file>
         <file>fskybox.fsh</file>
         <file>vskybox.vsh</file>
+        <file>postprocessing.fsh</file>
+        <file>postprocessing.vsh</file>
     </qresource>
 </RCC>

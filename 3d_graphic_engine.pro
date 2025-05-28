@@ -15,6 +15,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
+    postprocessor.cpp \
     primitives.cpp \
     scene.cpp \
     shadermanager.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     light.h \
     mainwindow.h \
     openglwidget.h \
+    postprocessor.h \
     primitives.h \
     scene.h \
     shadermanager.h \

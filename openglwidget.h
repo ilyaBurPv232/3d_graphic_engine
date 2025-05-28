@@ -11,6 +11,7 @@
 #include "cameracontroller.h"
 #include "light.h"
 #include "fpscounter.h"
+#include "postprocessor.h"
 
 class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
@@ -19,6 +20,8 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 public:
     explicit OpenGLWidget(QWidget* parent = nullptr);
     ~OpenGLWidget();
+
+    PostProcessor* getPostProcessor() const { return postProcessor; }
 
 protected:
     void initializeGL() override;
@@ -46,6 +49,10 @@ private:
     Light* light;
 
     FPSCounter* fpsCounter;
+
+    PostProcessor* postProcessor;
+    QOpenGLShaderProgram* postProcessingProgram;
+
 
 signals:
     void frameRendered();

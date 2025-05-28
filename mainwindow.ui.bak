@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>3D Scene Editor</string>
+   <string>3D engine</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -20,83 +20,78 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="sceneTab">
+      <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Scene</string>
+        <string>3D View</string>
        </attribute>
-       <widget class="QLabel" name="fps_counter">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>31</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>FPS: 0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTop|Qt::AlignmentFlag::AlignTrailing</set>
-        </property>
-       </widget>
-       <widget class="QOpenGLWidget" name="openGLWidget">
-        <property name="geometry">
-         <rect>
-          <x>-1</x>
-          <y>-1</y>
-          <width>781</width>
-          <height>511</height>
-         </rect>
-        </property>
-       </widget>
       </widget>
-      <widget class="QWidget" name="figuresTab">
+      <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>Figures</string>
+        <string>Settings</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
-           <string>Add Figure</string>
+           <string>Post-Processing Effects</string>
           </property>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="checkBoxVignette">
              <property name="text">
-              <string>Type:</string>
+              <string>Vignette</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="figureTypeCombo">
-             <item>
-              <property name="text">
-               <string>Cube</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Sphere</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Cone</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Texture:</string>
+           <item>
+            <widget class="QSlider" name="sliderVignetteIntensity">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="textureCombo">
+           <item>
+            <widget class="QCheckBox" name="checkBoxFilmGrain">
+             <property name="text">
+              <string>Film Grain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSlider" name="sliderFilmGrainIntensity">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxNegative">
+             <property name="text">
+              <string>Negative</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkBoxSepia">
+             <property name="text">
+              <string>Sepia</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxColorFilters">
              <item>
               <property name="text">
                <string>None</string>
@@ -104,77 +99,36 @@
              </item>
              <item>
               <property name="text">
-               <string>Wood</string>
+               <string>Blue</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Metal</string>
+               <string>Red</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Green</string>
               </property>
              </item>
             </widget>
            </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QPushButton" name="addFigureButton">
-             <property name="text">
-              <string>Add Figure</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Figures List</string>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QListWidget" name="figuresList"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="removeFigureButton">
-             <property name="text">
-              <string>Remove Selected</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Configuration</string>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLineEdit" name="configNameEdit">
-             <property name="placeholderText">
-              <string>Config name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="saveConfigButton">
-             <property name="text">
-              <string>Save</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="configCombo"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="loadConfigButton">
-             <property name="text">
-              <string>Load</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -184,50 +138,25 @@
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>21</height>
+   </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSave_Scene"/>
-    <addaction name="actionLoad_Scene"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionAbout"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionSave_Scene">
+  <action name="actionQuit">
    <property name="text">
-    <string>Save Scene</string>
-   </property>
-  </action>
-  <action name="actionLoad_Scene">
-   <property name="text">
-    <string>Load Scene</string>
-   </property>
-  </action>
-  <action name="actionExit">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About</string>
+    <string>Quit</string>
    </property>
   </action>
  </widget>

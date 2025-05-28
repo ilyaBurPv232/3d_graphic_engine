@@ -14,7 +14,7 @@ void Skybox::initialize() {
 
 void Skybox::setupVertices() {
     float w_div_2 = 0.5f;
-    float border = 0.0003f; // Небольшой отступ от краев текстуры
+    float border = 0.0003f;
     QVector<VertexData> vertexes;
 
     // Позади нас
