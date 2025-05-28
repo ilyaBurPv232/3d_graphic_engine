@@ -25,7 +25,6 @@ public:
 
 protected:
     void initializeGL() override;
-    void initShaders();
     void resizeGL(int w, int h) override;
     void paintGL() override;
     void mousePressEvent(QMouseEvent* event) override;

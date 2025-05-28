@@ -10,6 +10,7 @@
 OpenGLWidget::OpenGLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
 {
+
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
 
@@ -18,6 +19,7 @@ OpenGLWidget::OpenGLWidget(QWidget* parent)
     connect(fpsCounter, &FPSCounter::fpsUpdated, this, &OpenGLWidget::fpsUpdated);
 
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
+
 
     QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
@@ -108,15 +110,11 @@ void OpenGLWidget::initializeGL()
     cameraController->updateCamera();
 }
 
-void OpenGLWidget::initShaders() {
-
-
-}
-
 void OpenGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
     scene.resize(w, h);
+
 }
 
 void OpenGLWidget::paintGL()
