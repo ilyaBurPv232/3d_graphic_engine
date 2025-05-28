@@ -1,7 +1,8 @@
 #include "texturemanager.h"
 #include <QDebug>
 
-TextureManager &TextureManager::instance()
+
+TextureManager& TextureManager::instance()
 {
     static TextureManager instance;
     return instance;
@@ -12,7 +13,7 @@ TextureManager::~TextureManager()
     clear();
 }
 
-QOpenGLTexture *TextureManager::loadTexture(const QString &path, const QString &name)
+QOpenGLTexture* TextureManager::loadTexture(const QString& path, const QString& name)
 {
     if (textures.contains(name)) {
         qWarning() << "Texture" << name << "already loaded";
@@ -25,7 +26,7 @@ QOpenGLTexture *TextureManager::loadTexture(const QString &path, const QString &
         return nullptr;
     }
 
-    QOpenGLTexture *texture = new QOpenGLTexture(image.mirrored());
+    QOpenGLTexture* texture = new QOpenGLTexture(image.flipped());
     texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     texture->setMagnificationFilter(QOpenGLTexture::Linear);
     texture->setWrapMode(QOpenGLTexture::Repeat);
@@ -34,17 +35,17 @@ QOpenGLTexture *TextureManager::loadTexture(const QString &path, const QString &
     return texture;
 }
 
-QOpenGLTexture *TextureManager::getTexture(const QString &name) const
+QOpenGLTexture* TextureManager::getTexture(const QString& name) const
 {
     return textures.value(name, nullptr);
 }
 
-bool TextureManager::contains(const QString &name) const
+bool TextureManager::contains(const QString& name) const
 {
     return textures.contains(name);
 }
 
-void TextureManager::removeTexture(const QString &name)
+void TextureManager::removeTexture(const QString& name)
 {
     if (textures.contains(name)) {
         delete textures[name];
@@ -52,8 +53,7 @@ void TextureManager::removeTexture(const QString &name)
     }
 }
 
-void TextureManager::clear()
-{
+void TextureManager::clear() {
     if (QOpenGLContext::currentContext()) {
         qDeleteAll(textures);
         textures.clear();

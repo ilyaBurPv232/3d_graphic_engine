@@ -1,15 +1,18 @@
 #include "openglwidget.h"
+#include "shadermanager.h"
+#include "texturemanager.h"
+#include "physicalprimitives.h"
+#include "primitives.h"
+#include "skybox.h"
+#include "collisiondetector.h"
+#include "physicalworld.h"
+#include "physicalobject.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
-#include "primitives.h"
-#include "shadermanager.h"
-#include "texturemanager.h"
 
-OpenGLWidget::OpenGLWidget(QWidget *parent)
-    : QOpenGLWidget(parent)
-    , frameCount(0)
-    , lastTime(0)
+OpenGLWidget::OpenGLWidget(QWidget* parent)
+    : QOpenGLWidget(parent), frameCount(0), lastTime(0)
 {
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
@@ -18,10 +21,9 @@ OpenGLWidget::OpenGLWidget(QWidget *parent)
     connect(fpsTimer, &QTimer::timeout, this, &OpenGLWidget::updateFPS);
     fpsTimer->start(100); // Обновление раз в секунду
 
-    connect(cameraController,
-            &CameraController::cameraUpdated,
-            this,
-            QOverload<>::of(&OpenGLWidget::update));
+    connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
+
+    QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
 OpenGLWidget::~OpenGLWidget()
@@ -52,10 +54,20 @@ void OpenGLWidget::initializeGL()
     glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
+
+    // Загружаем обычные шейдеры
     if (!ShaderManager::instance().loadShaderProgram("default",
                                                      ":/shaders/vshader.vsh",
                                                      ":/shaders/fshader.fsh")) {
-        qCritical() << "Failed to load shaders!";
+        qCritical() << "Failed to load default shaders!";
+        return;
+    }
+
+    // Загружаем шейдеры для скайбокса
+    if (!ShaderManager::instance().loadShaderProgram("skybox",
+                                                     ":/shaders/vskybox.vsh",
+                                                     ":/shaders/fskybox.fsh")) {
+        qCritical() << "Failed to load skybox shaders!";
         return;
     }
 
@@ -63,25 +75,43 @@ void OpenGLWidget::initializeGL()
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
-    TextureManager::instance().loadTexture(":/textures/water.png", "cubes");
+    TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
+    TextureManager::instance().loadTexture(":/textures/water.png", "water");
+    TextureManager::instance().loadTexture(":/textures/parcet.png", "parcet");
 
-    Cube *cube = new Cube("magma");
-    cube->initialize();
-    cube->setScale(QVector3D(1.5f, 1.5f, 1.5f));
-    cube->setPosition(QVector3D(1.0f, 0.0f, 0.0f));
-    scene.addShape(cube);
+    Skybox *skybox = new Skybox();
+    skybox->initialize();
+    skybox->setScale(QVector3D(500, 500, 500));
+    scene.addShape(skybox);
 
-    Pyramid *pyramid = new Pyramid("wood");
-    pyramid->initialize();
-    pyramid->setPosition(QVector3D(1.0f, 1.35f, 0.0f));
-    pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
-    scene.addShape(pyramid);
+    PhysicalWorld& world = PhysicalWorld::instance();
 
-    Sphere *sphere = new Sphere("cubes", 0.8f);
-    sphere->initialize();
-    sphere->setPosition(QVector3D(-1.0f, 0.0f, 0.0f));
-    sphere->setRotation(180, QVector3D(0, -1, 1));
-    scene.addShape(sphere);
+    scene.addShape(world.getGroundPlane()->getShape());
+
+    PhycSphere* physCube = new PhycSphere("cubes", 1.0, 1.0);
+    physCube->setPosition(QVector3D(9, 1, 0));
+    physCube->setVelocity(QVector3D(-1.0f, 0, 0));
+    world.addObject(physCube);
+    scene.addShape(physCube->getShape());
+
+    PhycCube* physCube1 = new PhycCube("magma", 1.0, 0.5);
+    physCube1->setPosition(QVector3D(9, 0, 0));
+    physCube1->setStatic(true);
+    physCube1->setVelocity(QVector3D(0, 0, 0));
+    world.addObject(physCube1);
+    scene.addShape(physCube1->getShape());
+
+    PhycPyramid* physPyramid = new PhycPyramid("wood", 1.0, 1.0);
+    physPyramid->setPosition(QVector3D(0, 0, 0));
+    //physPyramid->setStatic(true);
+    physPyramid->setVelocity(QVector3D(3.0f, 0, 0));
+    world.addObject(physPyramid);
+    scene.addShape(physPyramid->getShape());
+
+    PhycCylinder* phycCyl = new PhycCylinder("water", 1.0, 1.0);
+    phycCyl->setPosition(QVector3D(11.0f, 10.0f, 0));
+    world.addObject(phycCyl);
+    scene.addShape(phycCyl->getShape());
 
     cameraController->updateCamera();
 }
@@ -95,35 +125,76 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::paintGL()
 {
     frameCount++;
+    physical_counter ++;
+    deltaTime = frameTimer.restart() / 1000.0f;
+
+    // PhysicalWorld& world = PhysicalWorld::instance();
+    // QVector3D cybeV = world.getObjects()[0]->getVelocity();
+    // world.getObjects()[0]->update(deltaTime);
+    // CollisionDetector dect;
+    // bool isFlag = false;
+    // auto collions = dect.detectCollisions(world.getObjects(), isFlag);
+    // if (isFlag == true) {
+    //     world.getObjects()[0]->setVelocity(-cybeV);
+    // }
+    // world.getObjects()[2]->setAcceleration(world.getGravity());
+    // world.getObjects()[2]->update(1 / 144.0f);
+
+    // QVector<PhysicalObject*> test;
+    // test.append(world.getObjects()[2]);
+    // test.append(world.getGroundPlane());
+    // qDebug() << world.getObjects()[2]->getVelocity();
+
+    // bool Flag = false;
+    // auto col = dect.detectCollisions(test, Flag);
+    // if (Flag == true) {
+    //     world.getObjects()[2]->setStatic(true);
+    // }
+
+    PhysicalWorld& world = PhysicalWorld::instance();
+    world.updateObjects(1 / 144.0f);
+
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glDepthMask(GL_FALSE); // Отключаем запись глубины
+    QOpenGLShaderProgram* skyboxProgram = ShaderManager::instance().getShaderProgram("skybox");
+    if (skyboxProgram) {
+        skyboxProgram->bind();
+        scene.renderAll(*skyboxProgram);
+        skyboxProgram->release();
+    }
+    glDepthMask(GL_TRUE); // Включаем запись глубины обратно
+
+    // Рендерим обычные объекты
     if (program) {
         program->bind();
         scene.renderAll(*program);
         program->release();
     }
+
+    QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
-void OpenGLWidget::mousePressEvent(QMouseEvent *event)
+void OpenGLWidget::mousePressEvent(QMouseEvent* event)
 {
     cameraController->mousePressEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::mouseMoveEvent(QMouseEvent *event)
+void OpenGLWidget::mouseMoveEvent(QMouseEvent* event)
 {
     cameraController->mouseMoveEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event)
+void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event)
 {
     cameraController->mouseReleaseEvent(event);
     event->accept();
 }
 
-void OpenGLWidget::wheelEvent(QWheelEvent *event)
+void OpenGLWidget::wheelEvent(QWheelEvent* event)
 {
     cameraController->wheelEvent(event);
     event->accept();

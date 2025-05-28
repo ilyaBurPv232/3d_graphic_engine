@@ -15,13 +15,11 @@ public:
     // Получение экземпляра синглтона
     static PhysicalWorld& instance();
 
-    // Основные методы
     void addObject(PhysicalObject* object);
     void removeObject(PhysicalObject* object);
     void clearObjects();
     void update(float deltaTime);
 
-    // Геттеры/сеттеры
     QVector3D getGravity() const;
     void setGravity(const QVector3D& newGravity);
 
@@ -29,6 +27,9 @@ public:
     void setGroundPlane(PhysicalObject* plane);
 
     const QVector<PhysicalObject*>& getObjects() const;
+
+    void gravityUpdate() ;
+    void updateObjects(float deltaTime);
 
 private:
     PhysicalWorld(); // Приватный конструктор

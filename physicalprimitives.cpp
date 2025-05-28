@@ -42,34 +42,30 @@ PhycPyramid::PhycPyramid(const QString& textureName, double mass, double elastic
 }
 
 void PhycPyramid::getAABB(QVector3D& min, QVector3D& max) const {
-    QVector3D base[4] = {
-          QVector3D(-0.5f, -0.5f, -0.5f),
-          QVector3D(0.5f, -0.5f, -0.5f),
-          QVector3D(0.5f, -0.5f, 0.5f),
-          QVector3D(-0.5f, -0.5f, 0.5f)
-      };
-    QVector3D top(0.0f, 0.5f, 0.0f);
+    // Все вершины пирамиды (4 вершины основания + вершина)
+    QVector3D vertices[8] = {
+        QVector3D(-0.5f, -0.5f, -0.5f),  // Основание: зад-лево
+        QVector3D(0.5f, -0.5f, -0.5f),   // Основание: зад-право
+        QVector3D(0.5f, -0.5f, 0.5f),    // Основание: перед-право
+        QVector3D(-0.5f, -0.5f, 0.5f),   // Основание: перед-лево
+        QVector3D(0.0f, 0.5f, 0.0f)      // Вершина пирамиды
+    };
 
     min = QVector3D(INFINITY, INFINITY, INFINITY);
     max = QVector3D(-INFINITY, -INFINITY, -INFINITY);
 
-    for (const auto& v : base) {
-        QVector3D transformed = shape->getModelMatrix().map(v);
+    // Трансформируем все вершины и находим min/max
+    for (const auto& vertex : vertices) {
+        QVector3D transformed = shape->getModelMatrix().map(vertex);
+
         min.setX(qMin(min.x(), transformed.x()));
         min.setY(qMin(min.y(), transformed.y()));
         min.setZ(qMin(min.z(), transformed.z()));
+
         max.setX(qMax(max.x(), transformed.x()));
         max.setY(qMax(max.y(), transformed.y()));
         max.setZ(qMax(max.z(), transformed.z()));
     }
-
-    QVector3D transformedTop = shape->getModelMatrix().map(top);
-    min.setX(qMin(min.x(), transformedTop.x()));
-    min.setY(qMin(min.y(), transformedTop.y()));
-    min.setZ(qMin(min.z(), transformedTop.z()));
-    max.setX(qMax(max.x(), transformedTop.x()));
-    max.setY(qMax(max.y(), transformedTop.y()));
-    max.setZ(qMax(max.z(), transformedTop.z()));
 }
 
 PhycSphere::PhycSphere(const QString& textureName, double mass, double elasticity)
@@ -92,7 +88,7 @@ void PhycSphere::getAABB(QVector3D& min, QVector3D& max) const {
 }
 
 PhycCylinder::PhycCylinder(const QString& textureName, double mass, double elasticity)
-    : PhysicalObject(new Sphere(textureName), mass, elasticity) {
+    : PhysicalObject(new Cylinder(textureName), mass, elasticity) {
     static_cast<Cylinder*>(shape)->initialize();
 }
 

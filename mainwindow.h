@@ -9,7 +9,7 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class OpenGLWidget; // Добавьте forward declaration
+class OpenGLWidget;  // Добавьте forward declaration
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +21,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    OpenGLWidget *glWidget; // Добавьте указатель на виджет
+    OpenGLWidget *glWidget;  // Добавьте указатель на виджет
 };
 #endif // MAINWINDOW_H

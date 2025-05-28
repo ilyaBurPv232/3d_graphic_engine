@@ -180,43 +180,6 @@ QVector<VertexData> Cube::getVertices() const {
     return vertexes;
 }
 
-// QVector<QVector3D> Cube::getTransformedVertices() const {
-//     QVector<QVector3D> transformed;
-//     for (const auto &vertex : vertexes) {
-//         transformed.append(modelMatrix * vertex.position);
-//     }
-//     return transformed;
-// }
-
-// void Cube::getAABB(QVector3D &min, QVector3D &max) const {
-//     QVector3D localMin(-0.5f, -0.5f, -0.5f);
-//     QVector3D localMax(0.5f, 0.5f, 0.5f);
-
-//     QVector3D corners[8] = {
-//         QVector3D(localMin.x(), localMin.y(), localMin.z()),
-//         QVector3D(localMax.x(), localMin.y(), localMin.z()),
-//         QVector3D(localMin.x(), localMax.y(), localMin.z()),
-//         QVector3D(localMax.x(), localMax.y(), localMin.z()),
-//         QVector3D(localMin.x(), localMin.y(), localMax.z()),
-//         QVector3D(localMax.x(), localMin.y(), localMax.z()),
-//         QVector3D(localMin.x(), localMax.y(), localMax.z()),
-//         QVector3D(localMax.x(), localMax.y(), localMax.z())
-//     };
-
-//     min = QVector3D(INFINITY, INFINITY, INFINITY);
-//     max = QVector3D(-INFINITY, -INFINITY, -INFINITY);
-
-//     for (const auto& corner : corners) {
-//         QVector3D transformed = modelMatrix * corner;
-//         min.setX(qMin(min.x(), transformed.x()));
-//         min.setY(qMin(min.y(), transformed.y()));
-//         min.setZ(qMin(min.z(), transformed.z()));
-//         max.setX(qMax(max.x(), transformed.x()));
-//         max.setY(qMax(max.y(), transformed.y()));
-//         max.setZ(qMax(max.z(), transformed.z()));
-//     }
-// }
-
 Pyramid::Pyramid(const QString &textureName)
     : textureName(textureName)
 {
@@ -385,45 +348,6 @@ QVector<VertexData> Pyramid::getVertices() const {
     return vertexes;
 }
 
-// QVector<QVector3D> Pyramid::getTransformedVertices() const {
-//     QVector<QVector3D> transformed;
-//     for (const auto &vertex : vertexes) {
-//         transformed.append(modelMatrix * vertex.position);
-//     }
-//     return transformed;
-// }
-
-// void Pyramid::getAABB(QVector3D &min, QVector3D &max) const {
-//     QVector3D base[4] = {
-//         QVector3D(-0.5f, -0.5f, -0.5f),
-//         QVector3D(0.5f, -0.5f, -0.5f),
-//         QVector3D(0.5f, -0.5f, 0.5f),
-//         QVector3D(-0.5f, -0.5f, 0.5f)
-//     };
-//     QVector3D top(0.0f, 0.5f, 0.0f);
-
-//     min = QVector3D(INFINITY, INFINITY, INFINITY);
-//     max = QVector3D(-INFINITY, -INFINITY, -INFINITY);
-
-//     for (const auto& v : base) {
-//         QVector3D transformed = modelMatrix * v;
-//         min.setX(qMin(min.x(), transformed.x()));
-//         min.setY(qMin(min.y(), transformed.y()));
-//         min.setZ(qMin(min.z(), transformed.z()));
-//         max.setX(qMax(max.x(), transformed.x()));
-//         max.setY(qMax(max.y(), transformed.y()));
-//         max.setZ(qMax(max.z(), transformed.z()));
-//     }
-
-//     QVector3D transformedTop = modelMatrix * top;
-//     min.setX(qMin(min.x(), transformedTop.x()));
-//     min.setY(qMin(min.y(), transformedTop.y()));
-//     min.setZ(qMin(min.z(), transformedTop.z()));
-//     max.setX(qMax(max.x(), transformedTop.x()));
-//     max.setY(qMax(max.y(), transformedTop.y()));
-//     max.setZ(qMax(max.z(), transformedTop.z()));
-// }
-
 Sphere::Sphere(const QString &textureName, float radius, int sectors, int stacks)
     : textureName(textureName)
     , radius(radius)
@@ -559,22 +483,6 @@ QVector<VertexData> Sphere::getVertices() const {
 float Sphere::getRadius() const {
     return radius;
 }
-
-// QVector<QVector3D> Sphere::getTransformedVertices() const {
-//     QVector<QVector3D> transformed;
-//     for (const auto &vertex : vertexes) {
-//         transformed.append(modelMatrix * vertex.position);
-//     }
-//     return transformed;
-// }
-
-// void Sphere::getAABB(QVector3D &min, QVector3D &max) const {
-//     QVector3D center = position;
-//     float scaledRadius = radius * qMax(scaleFactor.x(), qMax(scaleFactor.y(), scaleFactor.z()));
-
-//     min = center - QVector3D(scaledRadius, scaledRadius, scaledRadius);
-//     max = center + QVector3D(scaledRadius, scaledRadius, scaledRadius);
-// }
 
 Cylinder::Cylinder(const QString& textureName, float radius, float height, int sectors, int stacks)
     : textureName(textureName), radius(radius), height(height), sectors(sectors), stacks(stacks)
@@ -754,46 +662,3 @@ float Cylinder::getRadius() const {
 float Cylinder::getHeight() const {
     return height;
 }
-
-// void Cylinder::getAABB(QVector3D &min, QVector3D &max) const
-// {
-//     float scaledRadius = radius * qMax(scaleFactor.x(), scaleFactor.z());
-//     float scaledHalfHeight = height * 0.5f * scaleFactor.y();
-
-//     QVector3D localMin(-scaledRadius, -scaledHalfHeight, -scaledRadius);
-//     QVector3D localMax(scaledRadius, scaledHalfHeight, scaledRadius);
-
-//     QVector<QVector3D> keyPoints = {
-//         QVector3D(0, -scaledHalfHeight, 0),          // низ центр
-//         QVector3D(0, scaledHalfHeight, 0),           // верх центр
-//         QVector3D(scaledRadius, -scaledHalfHeight, 0),   // низ право
-//         QVector3D(-scaledRadius, -scaledHalfHeight, 0),  // низ лево
-//         QVector3D(0, -scaledHalfHeight, scaledRadius),    // низ перед
-//         QVector3D(0, -scaledHalfHeight, -scaledRadius),  // низ зад
-//         QVector3D(scaledRadius, scaledHalfHeight, 0),    // верх право
-//         QVector3D(-scaledRadius, scaledHalfHeight, 0),   // верх лево
-//         QVector3D(0, scaledHalfHeight, scaledRadius),    // верх перед
-//         QVector3D(0, scaledHalfHeight, -scaledRadius)    // верх зад
-//     };
-
-//     min = QVector3D(INFINITY, INFINITY, INFINITY);
-//     max = QVector3D(-INFINITY, -INFINITY, -INFINITY);
-
-//     for (const auto& point : keyPoints) {
-//         QVector3D transformed = modelMatrix * point;
-//         min.setX(qMin(min.x(), transformed.x()));
-//         min.setY(qMin(min.y(), transformed.y()));
-//         min.setZ(qMin(min.z(), transformed.z()));
-//         max.setX(qMax(max.x(), transformed.x()));
-//         max.setY(qMax(max.y(), transformed.y()));
-//         max.setZ(qMax(max.z(), transformed.z()));
-//     }
-// }
-
-// QVector<QVector3D> Cylinder::getTransformedVertices() const {
-//     QVector<QVector3D> transformed;
-//     for (const auto &vertex : vertexes) {
-//         transformed.append(modelMatrix * vertex.position);
-//     }
-//     return transformed;
-// }

@@ -1,4 +1,5 @@
 #include "physicalobject.h"
+#include "primitives.h"
 #include <QDebug>
 
 PhysicalObject::PhysicalObject(Shape* shape, double mass, double elasticity)
@@ -10,9 +11,8 @@ PhysicalObject::PhysicalObject(Shape* shape, double mass, double elasticity)
     inverseMass = mass > 0 ? 1.0 / mass : 0;
 }
 
-PhysicalObject::~PhysicalObject()
-{
-    // shape удаляется где-то в другом месте
+PhysicalObject::~PhysicalObject() {
+
 }
 
 // Геттеры
@@ -38,6 +38,10 @@ QVector3D PhysicalObject::getPosition() const {
 
 Shape* PhysicalObject::getShape() const {
     return shape;
+}
+
+double PhysicalObject::getInverseMass() const {
+    return inverseMass;
 }
 
 bool PhysicalObject::isStatic() const {
@@ -90,26 +94,66 @@ void PhysicalObject::applyImpulse(const QVector3D& impulse) {
     }
 }
 
-// Основной метод обновления физики
 void PhysicalObject::update(float deltaTime) {
     if (isStaticObject || !shape) return;
 
-    // Интегрирование движения (прямолинейное)
-    acceleration = forceAccumulator * inverseMass;
-    velocity += acceleration * deltaTime;
-
-    // Применение скорости к позиции
+    // Обновление линейной скорости и позиции
+    if (forceAccumulator != QVector3D(0, 0, 0)) {
+        acceleration = forceAccumulator * inverseMass;
+    }
+    this->velocity += acceleration * deltaTime;
     QVector3D newPosition = shape->getPosition() + velocity * deltaTime;
-    this->setPosition(newPosition);
+    setPosition(newPosition);
 
-    // Сброс аккумулятора сил
+    // Качение сферы
+    if (auto sphere = dynamic_cast<Sphere*>(shape)) {
+        float radius = sphere->getRadius() * shape->getScale().x(); // Радиус с учетом масштаба
+        if (!qFuzzyIsNull(radius) && !velocity.isNull()) {
+            // Направление оси вращения: перпендикулярно направлению движения и "вверх" (Y)
+            QVector3D rotationAxis = QVector3D::crossProduct(QVector3D(0, 1, 0), velocity.normalized()).normalized();
+
+            // Угловая скорость (в радианах/сек): v = ω*r => ω = v/r
+            float angularSpeed = velocity.length() / radius;
+
+            // Применяем вращение (перевод из радиан в градусы)
+            shape->setRotation(angularSpeed * deltaTime * 180.0f / M_PI, rotationAxis);
+        }
+    }
+
+    // Качение цилиндра (лежащего на боку вдоль оси Z)
+    if (auto cylinder = dynamic_cast<Cylinder*>(shape)) {
+        float radius = cylinder->getRadius() * shape->getScale().y(); // Радиус с учетом масштаба
+        if (!qFuzzyIsNull(radius) && !velocity.isNull()) {
+            // Угловая скорость (в радианах/сек): v = ω*r => ω = v/r
+            float angularSpeed = velocity.x() / radius;
+
+            // Вращение вокруг оси Z (предполагаем, что цилиндр лежит на боку)
+            shape->setRotation(angularSpeed * deltaTime * 180.0f / M_PI, QVector3D(0, 0, 1));
+        }
+    }
+
     forceAccumulator = QVector3D(0, 0, 0);
 }
 
-QVector<QVector3D> PhysicalObject::getTransformedVertices() const{
+QVector<QVector3D> PhysicalObject::getTransformedVertices() const {
     QVector<QVector3D> transformed;
+    if (!shape || shape->getVertices().empty()) { // Добавляем проверки
+        qWarning() << "Shape or vertices are empty!";
+        return transformed;
+    }
+
     for (const auto &vertex : shape->getVertices()) {
         transformed.append(shape->getModelMatrix().map(vertex.position));
     }
     return transformed;
+}
+
+QVector3D PhysicalObject::getCenter() const {
+    return shape ? shape->getPosition() : QVector3D();
+}
+
+float PhysicalObject::getBoundingSphereRadius() const {
+    if (!shape) return 0.0f;
+    QVector3D scale = shape->getScale();
+    return 0.5f * qMax(scale.x(), qMax(scale.y(), scale.z()));
 }

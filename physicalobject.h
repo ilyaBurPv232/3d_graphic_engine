@@ -22,7 +22,6 @@ public:
     bool isStatic() const;
     double getInverseMass() const;
 
-    // Сеттеры
     void setVelocity(const QVector3D& newVelocity);
     void setAcceleration(const QVector3D& newAcceleration);
     void setMass(double newMass);
@@ -30,12 +29,14 @@ public:
     void setPosition(const QVector3D& position);
     void setStatic(bool isStatic);
 
-    // Физические взаимодействия
     void applyForce(const QVector3D& force);
     void applyImpulse(const QVector3D& impulse);
     void update(float deltaTime);
     QVector<QVector3D> getTransformedVertices() const;
     virtual void getAABB(QVector3D &min, QVector3D &max) const = 0;
+
+    QVector3D getCenter() const ;
+    float getBoundingSphereRadius() const;
 
 protected:
     Shape* shape;

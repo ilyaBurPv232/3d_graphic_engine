@@ -1,4 +1,4 @@
-QT       += core gui opengl
+QT       += core gui openglwidgets opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,24 +10,40 @@ CONFIG += c++17
 
 SOURCES += \
     cameracontroller.cpp \
+    collisionresolution.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
+    physicalprimitives.cpp \
     primitives.cpp \
     scene.cpp \
     shadermanager.cpp \
     shape.cpp \
-    texturemanager.cpp
+    skybox.cpp \
+    texturemanager.cpp \
+    rigidbody.cpp \
+    collisiondetector.cpp \
+    physicalobject.cpp \
+    physicalworld.cpp \
+    physicmath.cpp \
 
 HEADERS += \
     cameracontroller.h \
+    collisionresolution.h \
     mainwindow.h \
     openglwidget.h \
+    physicalprimitives.h \
     primitives.h \
     scene.h \
     shadermanager.h \
     shape.h \
-    texturemanager.h
+    skybox.h \
+    texturemanager.h \
+    rigidbody.h \
+    collisiondetector.h \
+    physicalobject.h \
+    physicalworld.h \
+    physicmath.h
 
 FORMS += \
     mainwindow.ui
@@ -45,4 +61,5 @@ DISTFILES += \
 
 RESOURCES += \
     shaders.qrc \
+    skyboxes.qrc \
     textures.qrc

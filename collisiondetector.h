@@ -3,19 +3,19 @@
 #define COLLISIONDETECTOR_H
 
 #include <QVector>
-#include "physicalprimitives.h"
 #include "physicalobject.h"
 
 struct CollisionInfo {
-    PhysicalObject* bodyA;
-    PhysicalObject* bodyB;
-    QVector3D collisionNormal;  // Добавим нормаль столкновения
-    float penetrationDepth;     // Глубина проникновения
+    PhysicalObject* objA;
+    PhysicalObject* objB;
+    QVector3D normal;
+    QVector3D contactPoint;
+    float penetration;
 };
 
 class CollisionDetector {
 public:
-    QVector<CollisionInfo> detectCollisions(const QVector<PhysicalObject*>& bodies);
+    QVector<CollisionInfo> detectCollisions(const QVector<PhysicalObject*>& bodies, bool& isCollision);
 
 private:
     bool aabbCollision(const QVector3D &minA, const QVector3D &maxA,
@@ -24,3 +24,4 @@ private:
 };
 
 #endif // COLLISIONDETECTOR_H
+

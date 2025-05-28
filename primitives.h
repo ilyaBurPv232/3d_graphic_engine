@@ -13,8 +13,6 @@ public:
     void initialize() override;
     void render(QOpenGLShaderProgram &program) override;
     QVector<VertexData> getVertices() const override;
-    // QVector<QVector3D> getTransformedVertices() const override;
-    // void getAABB(QVector3D &min, QVector3D &max) const override;
 
 private:
     void setupVertices();
@@ -31,8 +29,6 @@ public:
     void initialize() override;
     void render(QOpenGLShaderProgram &program) override;
     QVector<VertexData> getVertices() const override;
-    // QVector<QVector3D> getTransformedVertices() const override;
-    // void getAABB(QVector3D &min, QVector3D &max) const override;
 
 private:
     void setupVertices();
@@ -44,7 +40,7 @@ class Sphere : public Shape
 {
 public:
     Sphere(const QString &textureName = "default",
-           float radius = 1.0f,
+           float radius = 0.5f,
            int sectors = 36,
            int stacks = 18);
     ~Sphere() = default;
@@ -53,8 +49,7 @@ public:
     void render(QOpenGLShaderProgram &program) override;
     QVector<VertexData> getVertices() const override;
     float getRadius() const ;
-    // QVector<QVector3D> getTransformedVertices() const override;
-    // void getAABB(QVector3D &min, QVector3D &max) const override;
+
 
 private:
     void setupVertices();
@@ -76,8 +71,7 @@ public:
     QVector<VertexData> getVertices() const override;
     float getRadius() const ;
     float getHeight() const;
-    // QVector<QVector3D> getTransformedVertices() const override;
-    // void getAABB(QVector3D &min, QVector3D &max) const override;
+
 
 private:
     void setupVertices();
