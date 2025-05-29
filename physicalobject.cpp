@@ -114,29 +114,24 @@ void PhysicalObject::update(float deltaTime) {
     QVector3D newPosition = shape->getPosition() + velocity * deltaTime;
     setPosition(newPosition);
 
-    // Качение сферы
     if (auto sphere = dynamic_cast<Sphere*>(shape)) {
-        float radius = sphere->getRadius() * shape->getScale().x(); // Радиус с учетом масштаба
+        float radius = sphere->getRadius() * shape->getScale().x();
         if (!qFuzzyIsNull(radius) && !velocity.isNull()) {
-            // Направление оси вращения: перпендикулярно направлению движения и "вверх" (Y)
+
             QVector3D rotationAxis = QVector3D::crossProduct(QVector3D(0, 1, 0), velocity.normalized()).normalized();
 
-            // Угловая скорость (в радианах/сек): v = ω*r => ω = v/r
             float angularSpeed = velocity.length() / radius;
 
-            // Применяем вращение (перевод из радиан в градусы)
             shape->setRotation(angularSpeed * deltaTime * 180.0f / M_PI, rotationAxis);
         }
     }
 
-    // Качение цилиндра (лежащего на боку вдоль оси Z)
     if (auto cylinder = dynamic_cast<Cylinder*>(shape)) {
         float radius = cylinder->getRadius() * shape->getScale().y(); // Радиус с учетом масштаба
         if (!qFuzzyIsNull(radius) && !velocity.isNull()) {
-            // Угловая скорость (в радианах/сек): v = ω*r => ω = v/r
+
             float angularSpeed = velocity.x() / radius;
 
-            // Вращение вокруг оси Z (предполагаем, что цилиндр лежит на боку)
             shape->setRotation(angularSpeed * deltaTime * 180.0f / M_PI, QVector3D(0, 0, 1));
         }
     }

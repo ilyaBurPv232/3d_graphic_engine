@@ -16,6 +16,8 @@ PhysicalWorld::PhysicalWorld()
 PhysicalWorld::~PhysicalWorld()
 {
     clearObjects();
+    clearForceFields();
+    clearConstraints();
     delete groundPlane;
 }
 
@@ -101,19 +103,29 @@ void PhysicalWorld::gravityUpdate() {
 }
 
 void PhysicalWorld::updateObjects(float deltaTime) {
-    // Apply gravity to all objects
+
     for (PhysicalObject* obj : objects) {
         if (!obj->isStatic()) {
             obj->applyForce(gravity * static_cast<float>(obj->getMass()));
         }
     }
 
-    // Update object positions
     for (PhysicalObject* obj : objects) {
         obj->update(deltaTime);
     }
 
-    // Collision detection and resolution
+    for (RopeConstraint* constraint : m_ropeConstraints) {
+        constraint->update(deltaTime);
+    }
+
+    for (SpringConstraint* constraint : m_springConstraints) {
+        constraint->update(deltaTime);
+    }
+
+    for (RigidConstraint* constraint : m_rigidConstraints) {
+        constraint->update(deltaTime);
+    }
+
     CollisionDetector detector;
     bool hasCollisions = false;
     QVector<CollisionInfo> collisions = detector.detectCollisions(objects, hasCollisions);
@@ -123,7 +135,6 @@ void PhysicalWorld::updateObjects(float deltaTime) {
         resolver.resolveCollisions(collisions);
     }
 
-    // Also check collisions with ground plane
     QVector<PhysicalObject*> allObjects = objects;
     if (groundPlane) {
         allObjects.append(groundPlane);
@@ -140,6 +151,7 @@ void PhysicalWorld::updateObjects(float deltaTime) {
         for (PhysicalObject* obj : objects) {
             field->applyForce(obj);
         }
+
         if (groundPlane) {
             field->applyForce(groundPlane);
         }
@@ -163,5 +175,50 @@ void PhysicalWorld::clearForceFields() {
 
 const QVector<ForceField*>& PhysicalWorld::getForceFields() const {
     return forceFields;
+}
+
+void PhysicalWorld::addRopeConstraint(RopeConstraint* constraint) {
+    if (constraint && !m_ropeConstraints.contains(constraint)) {
+        m_ropeConstraints.append(constraint);
+    }
+}
+
+void PhysicalWorld::addSpringConstraint(SpringConstraint* constraint) {
+    if (constraint && !m_springConstraints.contains(constraint)) {
+        m_springConstraints.append(constraint);
+    }
+}
+
+void PhysicalWorld::addRigidConstraint(RigidConstraint* constraint) {
+    if (constraint && !m_rigidConstraints.contains(constraint)) {
+        m_rigidConstraints.append(constraint);
+    }
+}
+
+void PhysicalWorld::removeRopeConstraint(RopeConstraint* constraint) {
+    if (constraint) {
+        m_ropeConstraints.removeOne(constraint);
+    }
+}
+
+void PhysicalWorld::removeSpringConstraint(SpringConstraint* constraint) {
+    if (constraint) {
+        m_springConstraints.removeOne(constraint);
+    }
+}
+
+void PhysicalWorld::removeRigidConstraint(RigidConstraint* constraint) {
+    if (constraint) {
+        m_rigidConstraints.removeOne(constraint);
+    }
+}
+
+void PhysicalWorld::clearConstraints() {
+    qDeleteAll(m_ropeConstraints);
+    qDeleteAll(m_springConstraints);
+    qDeleteAll(m_rigidConstraints);
+    m_ropeConstraints.clear();
+    m_springConstraints.clear();
+    m_rigidConstraints.clear();
 }
 

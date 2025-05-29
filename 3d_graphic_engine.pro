@@ -13,18 +13,19 @@ SOURCES += \
     collisionresolution.cpp \
     forcefield.cpp \
     explosion.cpp \
-    leverphysics.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
     physicalprimitives.cpp \
     primitives.cpp \
+    rigidconstraint.cpp \
+    ropeconstraint.cpp \
     scene.cpp \
     shadermanager.cpp \
     shape.cpp \
     skybox.cpp \
+    springconstraint.cpp \
     texturemanager.cpp \
-    rigidbody.cpp \
     collisiondetector.cpp \
     physicalobject.cpp \
     physicalworld.cpp \
@@ -35,17 +36,18 @@ HEADERS += \
     collisionresolution.h \
     forcefield.h \
     explosion.h \
-    leverphysics.h \
     mainwindow.h \
     openglwidget.h \
     physicalprimitives.h \
     primitives.h \
+    rigidconstraint.h \
+    ropeconstraint.h \
     scene.h \
     shadermanager.h \
     shape.h \
     skybox.h \
+    springconstraint.h \
     texturemanager.h \
-    rigidbody.h \
     collisiondetector.h \
     physicalobject.h \
     physicalworld.h \
