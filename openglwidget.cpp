@@ -86,23 +86,46 @@ void OpenGLWidget::initializeGL()
 
     PhysicalWorld& world = PhysicalWorld::instance();
 
+    ForceField* vortex = new ForceField(ForceField::MAGNETIC,
+                                        QVector3D(0, 10, 0),
+                                        QVector3D(0, 1, 0), // Направление ветра
+                                        500.0f,              // Сила
+                                        1000.0f);
+
+    PhysicalWorld::instance().addForceField(vortex);
+    // Добавляем ветер
+    // ForceField* wind = new ForceField(ForceField::WIND,
+    //                                   QVector3D(0, 0, 0),
+    //                                   QVector3D(1, 0, 0), // Направление ветра
+    //                                   5.0f,              // Сила
+    //                                   50.0f);            // Радиус действия
+    // PhysicalWorld::instance().addForceField(wind);
+
+    // Добавляем магнитное поле
+    ForceField* magnet = new ForceField(ForceField::EXPLOSION,
+                                        QVector3D(0, 10, 0), // Позиция магнита
+                                        QVector3D(),         // Направление не используется
+                                        2000.0f,              // Сила
+                                        15.0f);             // Радиус
+    PhysicalWorld::instance().addForceField(magnet);
+
     scene.addShape(world.getGroundPlane()->getShape());
 
     PhycSphere* physCube = new PhycSphere("cubes", 1.0, 1.0);
-    physCube->setPosition(QVector3D(9, 1, 0));
+    physCube->setPosition(QVector3D(0, 1, 0));
     physCube->setVelocity(QVector3D(-1.0f, 0, 0));
     world.addObject(physCube);
     scene.addShape(physCube->getShape());
 
     PhycCube* physCube1 = new PhycCube("magma", 1.0, 0.5);
-    physCube1->setPosition(QVector3D(9, 0, 0));
-    physCube1->setStatic(true);
+    physCube1->setPosition(QVector3D(0, 0, 0));
+    // physCube1->setStatic(true);
     physCube1->setVelocity(QVector3D(0, 0, 0));
     world.addObject(physCube1);
     scene.addShape(physCube1->getShape());
 
     PhycPyramid* physPyramid = new PhycPyramid("wood", 1.0, 1.0);
-    physPyramid->setPosition(QVector3D(0, 0, 0));
+    physPyramid->setPosition(QVector3D(-9, 0, 0));
     //physPyramid->setStatic(true);
     physPyramid->setVelocity(QVector3D(3.0f, 0, 0));
     world.addObject(physPyramid);

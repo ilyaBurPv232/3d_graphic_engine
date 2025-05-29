@@ -11,6 +11,9 @@ CONFIG += c++17
 SOURCES += \
     cameracontroller.cpp \
     collisionresolution.cpp \
+    forcefield.cpp \
+    explosion.cpp \
+    leverphysics.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
@@ -30,6 +33,9 @@ SOURCES += \
 HEADERS += \
     cameracontroller.h \
     collisionresolution.h \
+    forcefield.h \
+    explosion.h \
+    leverphysics.h \
     mainwindow.h \
     openglwidget.h \
     physicalprimitives.h \

@@ -18,6 +18,9 @@ void CollisionResolution::resolveCollision(const CollisionInfo& collision) {
     float restitution = qMin(collision.objA->getElasticity(), collision.objB->getElasticity());
     applyImpulse(collision.objA, collision.objB, collision.normal, collision.contactPoint, restitution);
     positionalCorrection(collision.objA, collision.objB, collision.normal, collision.penetration);
+
+    if (!collision.objA->isStatic()) collision.objA->setIsOnSurface(true);
+    if (!collision.objB->isStatic()) collision.objB->setIsOnSurface(true);
 }
 
 void CollisionResolution::applyImpulse(PhysicalObject* objA, PhysicalObject* objB,

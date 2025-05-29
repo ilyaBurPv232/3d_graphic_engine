@@ -9,6 +9,7 @@ PhysicalObject::PhysicalObject(Shape* shape, double mass, double elasticity)
     acceleration = QVector3D(0, 0, 0);
     forceAccumulator = QVector3D(0, 0, 0);
     inverseMass = mass > 0 ? 1.0 / mass : 0;
+    frictionCoefficient = 0.3f;
 }
 
 PhysicalObject::~PhysicalObject() {
@@ -80,6 +81,14 @@ void PhysicalObject::setPosition(const QVector3D& position) {
     this->shape->setPosition(position);
 }
 
+void PhysicalObject::setIsOnSurface(bool newIsOnSurface){
+    isOnSurface = newIsOnSurface;
+}
+
+void PhysicalObject::setFrictionCoefficient(double newFriction) {
+    frictionCoefficient = newFriction;
+}
+
 // Применение силы (добавляется в аккумулятор)
 void PhysicalObject::applyForce(const QVector3D& force) {
     if (!isStaticObject) {
@@ -132,6 +141,12 @@ void PhysicalObject::update(float deltaTime) {
         }
     }
 
+
+    if (isOnSurface) {
+        velocity *= (1.0f - frictionCoefficient * deltaTime);
+    }
+
+    isOnSurface = false;
     forceAccumulator = QVector3D(0, 0, 0);
 }
 

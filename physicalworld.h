@@ -4,6 +4,7 @@
 #include <QVector3D>
 #include <QVector>
 #include "physicalobject.h"
+#include "forcefield.h"
 
 class PhysicalWorld
 {
@@ -31,9 +32,16 @@ public:
     void gravityUpdate() ;
     void updateObjects(float deltaTime);
 
+    void addForceField(ForceField* field);
+    void removeForceField(ForceField* field);
+    void clearForceFields();
+    const QVector<ForceField*>& getForceFields() const;
+
 private:
     PhysicalWorld(); // Приватный конструктор
     ~PhysicalWorld();
+
+    QVector<ForceField*> forceFields;
 
     QVector<PhysicalObject*> objects;
     PhysicalObject* groundPlane = nullptr;

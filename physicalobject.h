@@ -8,7 +8,7 @@
 class PhysicalObject {
 public:
     PhysicalObject(Shape* shape = nullptr,
-                    double mass = 1.0,
+                   double mass = 1.0,
                    double elasticity = 0.5);
     ~PhysicalObject();
 
@@ -28,6 +28,8 @@ public:
     void setElasticity(double newElasticity);
     void setPosition(const QVector3D& position);
     void setStatic(bool isStatic);
+    void setIsOnSurface(bool newIsOnSurface);
+    void setFrictionCoefficient(double newFriction);
 
     void applyForce(const QVector3D& force);
     void applyImpulse(const QVector3D& impulse);
@@ -46,7 +48,9 @@ protected:
     double mass;
     double inverseMass;
     double elasticity;
+    double frictionCoefficient;
     bool isStaticObject;
+    bool isOnSurface = false;
 };
 
 #endif // PHYSICALOBJECT_H

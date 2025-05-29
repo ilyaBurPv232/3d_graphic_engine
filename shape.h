@@ -38,6 +38,7 @@ public:
     QVector3D getPosition() const;
     virtual QVector<VertexData> getVertices() const = 0;
     QMatrix4x4 getModelMatrix() const;
+    QQuaternion getRotation();
     QVector3D getScale() const;
 
 protected:

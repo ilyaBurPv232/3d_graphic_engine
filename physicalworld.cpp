@@ -135,4 +135,33 @@ void PhysicalWorld::updateObjects(float deltaTime) {
             groundResolver.resolveCollisions(groundCols);
         }
     }
+
+    for (ForceField* field : forceFields) {
+        for (PhysicalObject* obj : objects) {
+            field->applyForce(obj);
+        }
+        if (groundPlane) {
+            field->applyForce(groundPlane);
+        }
+    }
 }
+
+void PhysicalWorld::addForceField(ForceField* field) {
+    if (field && !forceFields.contains(field)) {
+        forceFields.append(field);
+    }
+}
+
+void PhysicalWorld::removeForceField(ForceField* field) {
+    forceFields.removeOne(field);
+}
+
+void PhysicalWorld::clearForceFields() {
+    qDeleteAll(forceFields);
+    forceFields.clear();
+}
+
+const QVector<ForceField*>& PhysicalWorld::getForceFields() const {
+    return forceFields;
+}
+

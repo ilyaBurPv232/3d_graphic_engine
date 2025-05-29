@@ -39,6 +39,10 @@ void Shape::updateModelMatrix()
     modelMatrix.scale(scaleFactor);
 }
 
+QQuaternion Shape::getRotation() {
+    return rotationQuat;
+}
+
 QMatrix4x4 Shape::getModelMatrix() const {
     return modelMatrix;
 }
@@ -50,3 +54,5 @@ QVector3D Shape::getScale() const {
 QVector3D Shape::getPosition() const {
     return position;
 }
+
+
