@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "physicalworld.h"
 
 Scene::Scene()
 {
@@ -53,4 +54,15 @@ void Scene::setCameraUp(const QVector3D& up) {
 void Scene::resize(int w, int h) {
     projection.setToIdentity();
     projection.perspective(45.0f, float(w) / float(h), 0.1f, 1000.0f);
+}
+
+void Scene::clearShapes() {
+    QVector<Shape*> toDelete;
+    for (Shape* shape : shapes) {
+        if (shape != PhysicalWorld::instance().getGroundPlane()->getShape()) {
+            toDelete.append(shape);
+        }
+    }
+    qDeleteAll(toDelete);
+    shapes.clear();
 }

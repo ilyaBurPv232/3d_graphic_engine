@@ -28,6 +28,7 @@ public:
     QVector3D getCameraFront() const { return cameraFront; }
     QVector3D getCameraUp() const { return cameraUp; }
     const QVector<Shape*>& getShapes() const { return shapes; }
+    void clearShapes();
 
 private:
     QVector<Shape*> shapes;

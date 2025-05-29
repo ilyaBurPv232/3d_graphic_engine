@@ -12,7 +12,6 @@ SOURCES += \
     cameracontroller.cpp \
     collisionresolution.cpp \
     forcefield.cpp \
-    explosion.cpp \
     main.cpp \
     mainwindow.cpp \
     openglwidget.cpp \
@@ -35,7 +34,6 @@ HEADERS += \
     cameracontroller.h \
     collisionresolution.h \
     forcefield.h \
-    explosion.h \
     mainwindow.h \
     openglwidget.h \
     physicalprimitives.h \

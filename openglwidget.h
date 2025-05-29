@@ -17,6 +17,7 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 public:
     explicit OpenGLWidget(QWidget* parent = nullptr);
     ~OpenGLWidget();
+    void updateScene();
 
 protected:
     void initializeGL() override;
@@ -28,6 +29,7 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
     void updateFPS();
+
 
 private:
     QOpenGLShaderProgram *program;

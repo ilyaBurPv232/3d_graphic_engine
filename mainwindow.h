@@ -18,6 +18,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void addCube();
+    void addSphere();
+    void addPyramid();
+    void addCylinder();
+    void addForceField();
+    void addConstraint();
 
 private:
     Ui::MainWindow *ui;

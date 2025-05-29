@@ -12,7 +12,7 @@
 #include <QWheelEvent>
 
 OpenGLWidget::OpenGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent), frameCount(0), lastTime(0)
+    : QOpenGLWidget(parent), frameCount(0), lastTime(0), physical_counter(0)
 {
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
@@ -117,31 +117,31 @@ void OpenGLWidget::initializeGL()
     // world.addObject(physCube);
     // scene.addShape(physCube->getShape());
 
-    PhycCube* physCube1 = new PhycCube("magma", 1.0, 0.5);
-    physCube1->setPosition(QVector3D(0, 0, 0));
-    // physCube1->setStatic(true);
-    physCube1->setVelocity(QVector3D(0, 0, 0));
-    world.addObject(physCube1);
-    scene.addShape(physCube1->getShape());
+    // PhycCube* physCube1 = new PhycCube("magma", 1.0, 0.5);
+    // physCube1->setPosition(QVector3D(0, 0, 0));
+    // // physCube1->setStatic(true);
+    // physCube1->setVelocity(QVector3D(0, 0, 0));
+    // world.addObject(physCube1);
+    // scene.addShape(physCube1->getShape());
 
-    PhycPyramid* physPyramid = new PhycPyramid("wood", 1.0, 1.0);
-    physPyramid->setPosition(QVector3D(-1, 0, 0));
-    //physPyramid->setStatic(true);
-    physPyramid->setVelocity(QVector3D(-3.0f, 0, 0));
-    world.addObject(physPyramid);
-    scene.addShape(physPyramid->getShape());
+    // PhycPyramid* physPyramid = new PhycPyramid("wood", 1.0, 1.0);
+    // physPyramid->setPosition(QVector3D(-1, 0, 0));
+    // //physPyramid->setStatic(true);
+    // physPyramid->setVelocity(QVector3D(-3.0f, 0, 0));
+    // world.addObject(physPyramid);
+    // scene.addShape(physPyramid->getShape());
 
-    PhycCylinder* phycCyl = new PhycCylinder("water", 1.0, 1.0);
-    phycCyl->setPosition(QVector3D(11.0f, 10.0f, 0));
-    world.addObject(phycCyl);
-    scene.addShape(phycCyl->getShape());
+    // PhycCylinder* phycCyl = new PhycCylinder("water", 1.0, 1.0);
+    // phycCyl->setPosition(QVector3D(11.0f, 10.0f, 0));
+    // world.addObject(phycCyl);
+    // scene.addShape(phycCyl->getShape());
 
-    // RopeConstraint* rope = new RopeConstraint(physCube1, physPyramid, 5.0f);
-    // PhysicalWorld::instance().addRopeConstraint(rope);
-    // SpringConstraint* spring = new SpringConstraint(physCube1, physPyramid, 3.0f, 0.5f);
-    // PhysicalWorld::instance().addSpringConstraint(spring);
-    RigidConstraint* rigid = new RigidConstraint(physCube1, physPyramid, 4.0f);
-    PhysicalWorld::instance().addRigidConstraint(rigid);
+    // // RopeConstraint* rope = new RopeConstraint(physCube1, physPyramid, 5.0f);
+    // // PhysicalWorld::instance().addRopeConstraint(rope);
+    // // SpringConstraint* spring = new SpringConstraint(physCube1, physPyramid, 3.0f, 0.5f);
+    // // PhysicalWorld::instance().addSpringConstraint(spring);
+    // RigidConstraint* rigid = new RigidConstraint(physCube1, physPyramid, 4.0f);
+    // PhysicalWorld::instance().addRigidConstraint(rigid);
 
     cameraController->updateCamera();
 }
@@ -157,29 +157,6 @@ void OpenGLWidget::paintGL()
     frameCount++;
     physical_counter ++;
     deltaTime = frameTimer.restart() / 1000.0f;
-
-    // PhysicalWorld& world = PhysicalWorld::instance();
-    // QVector3D cybeV = world.getObjects()[0]->getVelocity();
-    // world.getObjects()[0]->update(deltaTime);
-    // CollisionDetector dect;
-    // bool isFlag = false;
-    // auto collions = dect.detectCollisions(world.getObjects(), isFlag);
-    // if (isFlag == true) {
-    //     world.getObjects()[0]->setVelocity(-cybeV);
-    // }
-    // world.getObjects()[2]->setAcceleration(world.getGravity());
-    // world.getObjects()[2]->update(1 / 144.0f);
-
-    // QVector<PhysicalObject*> test;
-    // test.append(world.getObjects()[2]);
-    // test.append(world.getGroundPlane());
-    // qDebug() << world.getObjects()[2]->getVelocity();
-
-    // bool Flag = false;
-    // auto col = dect.detectCollisions(test, Flag);
-    // if (Flag == true) {
-    //     world.getObjects()[2]->setStatic(true);
-    // }
 
     PhysicalWorld& world = PhysicalWorld::instance();
     world.updateObjects(1 / 144.0f);
@@ -228,4 +205,28 @@ void OpenGLWidget::wheelEvent(QWheelEvent* event)
 {
     cameraController->wheelEvent(event);
     event->accept();
+}
+
+void OpenGLWidget::updateScene()
+{
+    // Удаляем только динамические объекты, кроме земли
+    QVector<Shape*> shapesToKeep;
+    for (Shape* shape : scene.getShapes()) {
+        if (shape == PhysicalWorld::instance().getGroundPlane()->getShape()) {
+            shapesToKeep.append(shape);
+        }
+    }
+    scene.clearShapes();
+
+    // Восстанавливаем землю
+    for (Shape* shape : shapesToKeep) {
+        scene.addShape(shape);
+    }
+
+    // Добавляем все объекты из физического мира
+    for (PhysicalObject* obj : PhysicalWorld::instance().getObjects()) {
+        scene.addShape(obj->getShape());
+    }
+
+    update();
 }
