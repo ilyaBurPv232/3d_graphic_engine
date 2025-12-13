@@ -31,6 +31,9 @@ public:
     void setPosition(const QVector3D& position);
     void setRotation(float angle, const QVector3D& axis);
     void setScale(const QVector3D& scale);
+    QVector3D getPosition() {
+        return position;
+    }
 
 protected:
     void updateModelMatrix();

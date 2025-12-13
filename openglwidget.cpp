@@ -7,20 +7,20 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 
-OpenGLWidget::OpenGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent)
-{
 
+OpenGLWidget::OpenGLWidget(QWidget* parent)
+    : QOpenGLWidget(parent),
+    moveForward(false), moveBackward(false),
+    moveLeft(false), moveRight(false),
+    moveUp(false), moveDown(false),
+    movementSpeed(3.0f)
+{
     setFocusPolicy(Qt::StrongFocus);
     cameraController = new CameraController(&scene, this);
-
     fpsCounter = new FPSCounter(this);
     connect(this, &OpenGLWidget::frameRendered, fpsCounter, &FPSCounter::frameRendered);
     connect(fpsCounter, &FPSCounter::fpsUpdated, this, &OpenGLWidget::fpsUpdated);
-
     connect(cameraController, &CameraController::cameraUpdated, this, QOverload<>::of(&OpenGLWidget::update));
-
-
     QTimer::singleShot(0, this, QOverload<>::of(&OpenGLWidget::update));
 }
 
@@ -31,16 +31,8 @@ OpenGLWidget::~OpenGLWidget()
     doneCurrent();
 }
 
-
-
 void OpenGLWidget::initializeGL()
 {
-    light = new Light(this);
-    connect(light, &Light::lightChanged, this, QOverload<>::of(&OpenGLWidget::update));
-    light->setColor(QVector3D(0.78f, 0.65f, 0.53f));
-    light->setAmbientStrength(0.5);
-    light->setPosition(QVector3D(-100.0f, 350.0f, 450.0f));
-
     initializeOpenGLFunctions();
     glClearColor(0.3f, 0.2f, 0.3f, 1.0f);
     glEnable(GL_DEPTH_TEST);
@@ -78,7 +70,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
     TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
-    TextureManager::instance().loadTexture(":/textures/grass.png", "grass_texture");
+    TextureManager::instance().loadTexture(":/textures/grass.png", "grass");
     TextureManager::instance().loadTexture(":/textures/gorbino_face.png", "face");
 
     Skybox *skybox = new Skybox();
@@ -86,6 +78,13 @@ void OpenGLWidget::initializeGL()
     skybox->setScale(QVector3D(500, 500, 500));
     skybox->setRotation(180, QVector3D(0, 1, 0));
     scene.setSkybox(skybox);
+
+
+    lightSphere = new Sphere("face", 0.3f);
+    lightSphere->initialize();
+    lightSphere->setPosition(QVector3D(0.0f, 5.0f, 0.0f));
+    lightSphere->setScale(QVector3D(0.5f, 0.5f, 0.5f));
+    scene.addShape(lightSphere);
 
     Cube *cube = new Cube("magma");
     cube->initialize();
@@ -109,14 +108,22 @@ void OpenGLWidget::initializeGL()
     cylinder->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(cylinder);
 
-    Cube *ground = new Cube("grass_texture");
+    Cube *ground = new Cube("grass");
     ground->setScale(QVector3D(200.0f, 0.1f, 200.0f));
     ground->setPosition(QVector3D(0, -0.8f, 0));
     scene.addShape(ground);
 
+
+    light = new Light(this);
+    connect(light, &Light::lightChanged, this, QOverload<>::of(&OpenGLWidget::update));
+    light->setColor(QVector3D(0.5f, 0.5f, 0.5f));
+    light->setAmbientStrength(0.5);
+    light->setPosition(QVector3D(-100.0f, 350.0f, 450.0f));
+    light->setDirection(QVector3D(-0.2f, -1.0f, -0.3f));
+    light->setLightType(0);
+
     cameraController->updateCamera();
 }
-
 
 void OpenGLWidget::resizeGL(int w, int h)
 {
@@ -137,10 +144,29 @@ void OpenGLWidget::paintGL()
 
     animCounter += 0.01f;
 
-    scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, 0, cos(animCounter) * 3));
-    scene.getShapes()[2]->setRotation(1, QVector3D(1, 0, 1));
-    scene.getShapes()[3]->setPosition(QVector3D(sin(animCounter) * 1.9, 0, cos(animCounter) * 2));
-    scene.getShapes()[3]->setRotation(-1, QVector3D(0, 1, 0));
+    QVector3D lightSpherePos = lightSphere->getPosition();
+    float moveStep = movementSpeed * deltaTime;
+
+    if (moveForward) lightSpherePos.setZ(lightSpherePos.z() - moveStep);
+    if (moveBackward) lightSpherePos.setZ(lightSpherePos.z() + moveStep);
+    if (moveLeft) lightSpherePos.setX(lightSpherePos.x() - moveStep);
+    if (moveRight) lightSpherePos.setX(lightSpherePos.x() + moveStep);
+    if (moveUp) lightSpherePos.setY(lightSpherePos.y() + moveStep);
+    if (moveDown) lightSpherePos.setY(lightSpherePos.y() - moveStep);
+
+    lightSphere->setPosition(lightSpherePos);
+
+    light->setPosition(lightSphere->getPosition());
+
+    QVector3D toCenter = QVector3D(0, 0, 0) - lightSphere->getPosition();
+    if (toCenter.length() > 0) {
+        light->setDirection(toCenter.normalized());
+    }
+
+    scene.getShapes()[3]->setPosition(QVector3D(sin(animCounter) * 3, 0, cos(animCounter) * 3));
+    scene.getShapes()[3]->setRotation(1, QVector3D(1, 0, 1));
+    scene.getShapes()[4]->setPosition(QVector3D(sin(animCounter) * 1.9, 0, cos(animCounter) * 2));
+    scene.getShapes()[4]->setRotation(-1, QVector3D(0, 1, 0));
 
     deltaTime = frameTimer.restart() / 1000.0f;
 
@@ -158,19 +184,20 @@ void OpenGLWidget::paintGL()
         program->setUniformValue("lightPos", light->position());
         program->setUniformValue("viewPos", scene.getCameraPosition());
         program->setUniformValue("lightColor", light->color());
+        program->setUniformValue("lightDirection", light->direction());
         program->setUniformValue("ambientStrength", light->ambientStrength());
         program->setUniformValue("specularStrength", light->specularStrength());
         program->setUniformValue("shininess", light->shininess());
-
+        program->setUniformValue("lightType", light->lightType());
+        program->setUniformValue("cutOff", light->cutOff());
+        program->setUniformValue("outerCutOff", light->outerCutOff());
+        program->setUniformValue("lightSphereEnabled", light->lightSphereEnabled());
         program->setUniformValue("objectColor", QVector3D(1.0f, 1.0f, 1.0f));
-
         scene.renderAll(*program);
         program->release();
     }
 
     postProcessor->endRender();
-
-
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (postProcessingProgram) {
@@ -208,6 +235,39 @@ void OpenGLWidget::wheelEvent(QWheelEvent* event)
 
 void OpenGLWidget::keyPressEvent(QKeyEvent *event)
 {
+    switch (event->key()) {
+    case Qt::Key_W:
+        moveForward = true;
+        break;
+    case Qt::Key_S:
+        moveBackward = true;
+        break;
+    case Qt::Key_A:
+        moveLeft = true;
+        break;
+    case Qt::Key_D:
+        moveRight = true;
+        break;
+    case Qt::Key_Q:
+        moveUp = true;
+        break;
+    case Qt::Key_E:
+        moveDown = true;
+        break;
+    case Qt::Key_R:
+        lightSphere->setPosition(QVector3D(0.0f, 5.0f, 0.0f));
+        break;
+    case Qt::Key_Plus:
+    case Qt::Key_Equal:
+        movementSpeed += 0.5f;
+        qDebug() << "Movement speed:" << movementSpeed;
+        break;
+    case Qt::Key_Minus:
+        movementSpeed = qMax(0.5f, movementSpeed - 0.5f);
+        qDebug() << "Movement speed:" << movementSpeed;
+        break;
+    }
+
     if (event->key() == Qt::Key_F3) {
         fpsCounter->toggleVisibility();
     }
@@ -216,5 +276,54 @@ void OpenGLWidget::keyPressEvent(QKeyEvent *event)
         postProcessor->toggleEffects(enabled);
         update();
     }
+    else if (event->key() == Qt::Key_1) {
+        light->setLightType(0);
+        qDebug() << "Switched to Point Light";
+        update();
+    }
+    else if (event->key() == Qt::Key_2) {
+        light->setLightType(1);
+        qDebug() << "Switched to Directional Light";
+        update();
+    }
+    else if (event->key() == Qt::Key_3) {
+        light->setLightType(2);
+        qDebug() << "Switched to Spot Light";
+        update();
+    }
+    else if (event->key() == Qt::Key_L) {
+        bool enabled = !light->lightSphereEnabled();
+        light->setLightSphereEnabled(enabled);
+        lightSphereVisible = enabled;
+        qDebug() << "Light sphere" << (enabled ? "enabled" : "disabled");
+        update();
+    }
+
     QOpenGLWidget::keyPressEvent(event);
+}
+
+void OpenGLWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_W:
+        moveForward = false;
+        break;
+    case Qt::Key_S:
+        moveBackward = false;
+        break;
+    case Qt::Key_A:
+        moveLeft = false;
+        break;
+    case Qt::Key_D:
+        moveRight = false;
+        break;
+    case Qt::Key_Q:
+        moveUp = false;
+        break;
+    case Qt::Key_E:
+        moveDown = false;
+        break;
+    }
+
+    QOpenGLWidget::keyReleaseEvent(event);
 }

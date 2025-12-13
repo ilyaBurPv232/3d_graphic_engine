@@ -10,6 +10,46 @@ Light::Light(QObject* parent)
 {
 }
 
+void Light::setDirection(const QVector3D& direction)
+{
+    if (m_direction != direction) {
+        m_direction = direction;
+        emit lightChanged();
+    }
+}
+
+void Light::setLightType(int type)
+{
+    if (m_lightType != type && type >= 0 && type <= 2) {
+        m_lightType = type;
+        emit lightChanged();
+    }
+}
+
+void Light::setCutOff(float cutOff)
+{
+    if (m_cutOff != cutOff) {
+        m_cutOff = cutOff;
+        emit lightChanged();
+    }
+}
+
+void Light::setOuterCutOff(float outerCutOff)
+{
+    if (m_outerCutOff != outerCutOff) {
+        m_outerCutOff = outerCutOff;
+        emit lightChanged();
+    }
+}
+
+void Light::setLightSphereEnabled(bool enabled)
+{
+    if (m_lightSphereEnabled != enabled) {
+        m_lightSphereEnabled = enabled;
+        emit lightChanged();
+    }
+}
+
 void Light::setPosition(const QVector3D& position)
 {
     if (m_position != position) {

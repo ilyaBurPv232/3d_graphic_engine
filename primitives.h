@@ -39,6 +39,7 @@ public:
     void initialize() override;
     void render(QOpenGLShaderProgram& program) override;
 
+
 private:
     void setupVertices();
     QString textureName;
