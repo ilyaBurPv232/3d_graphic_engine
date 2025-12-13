@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->setTabText(0, "Сцена");
     ui->tabWidget->setTabText(1, "Пост-обработка");
 
+    ui->tabWidget->setCurrentIndex(0);
+
     connect(ui->vignetteCheckBox, &QCheckBox::toggled, this, &MainWindow::onVignetteToggled);
     connect(ui->filmGrainCheckBox, &QCheckBox::toggled, this, &MainWindow::onFilmGrainToggled);
     connect(ui->negativeCheckBox, &QCheckBox::toggled, this, &MainWindow::onNegativeToggled);

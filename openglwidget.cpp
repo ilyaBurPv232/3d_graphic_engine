@@ -79,6 +79,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
     TextureManager::instance().loadTexture(":/textures/grass.png", "grass_texture");
+    TextureManager::instance().loadTexture(":/textures/gorbino_face.png", "face");
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
@@ -97,7 +98,7 @@ void OpenGLWidget::initializeGL()
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
 
-    Sphere *sphere = new Sphere("cubes", 0.5f);
+    Sphere *sphere = new Sphere("face", 0.5f);
     sphere->initialize();
     sphere->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(sphere);
