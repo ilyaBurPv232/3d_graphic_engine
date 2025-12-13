@@ -3,6 +3,7 @@
 #include "texturemanager.h"
 #include "primitives.h"
 #include "skybox.h"
+#include "customfigure.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -112,6 +113,16 @@ void OpenGLWidget::initializeGL()
     ground->setScale(QVector3D(200.0f, 0.1f, 200.0f));
     ground->setPosition(QVector3D(0, -0.8f, 0));
     scene.addShape(ground);
+
+    CustomFigure* customFigure = new CustomFigure("magma", 8, 6, 6); // 8-угольник сверху, 6-угольник снизу, 6-угольник в центре
+    customFigure->initialize();
+    customFigure->setPosition(QVector3D(5.0f, 0.7f, 0.0f));
+    customFigure->setScale(QVector3D(1.0f, 1.0f, 1.0f));
+    customFigure->setRotation(180.0f, QVector3D(0,0,1));
+    scene.addShape(customFigure);
+
+    // Для изменения количества сторон можно использовать:
+    customFigure->setCenterSides(10); // Изменить центральную фигуру на 10-угольник
 
 
     light = new Light(this);
