@@ -78,6 +78,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/wood.png", "wood");
     TextureManager::instance().loadTexture(":/textures/cubes_gray.png", "cubes");
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
+    TextureManager::instance().loadTexture(":/textures/grass.png", "grass_texture");
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
@@ -107,14 +108,23 @@ void OpenGLWidget::initializeGL()
     cylinder->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(cylinder);
 
+    Cube *ground = new Cube("grass_texture");
+    ground->setScale(QVector3D(200.0f, 0.1f, 200.0f));
+    ground->setPosition(QVector3D(0, -0.8f, 0));
+    scene.addShape(ground);
+
     cameraController->updateCamera();
 }
+
 
 void OpenGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
     scene.resize(w, h);
-
+    cameraController->resize(w, h);
+    if (postProcessor) {
+        postProcessor->resize(w, h);
+    }
 }
 
 void OpenGLWidget::paintGL()
@@ -126,7 +136,7 @@ void OpenGLWidget::paintGL()
 
     animCounter += 0.01f;
 
-    scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, cos(animCounter) * 3, 0));
+    scene.getShapes()[2]->setPosition(QVector3D(sin(animCounter) * 3, 0, cos(animCounter) * 3));
     scene.getShapes()[2]->setRotation(1, QVector3D(1, 0, 1));
     scene.getShapes()[3]->setPosition(QVector3D(sin(animCounter) * 1.9, 0, cos(animCounter) * 2));
     scene.getShapes()[3]->setRotation(-1, QVector3D(0, 1, 0));

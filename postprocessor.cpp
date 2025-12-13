@@ -38,7 +38,7 @@ void PostProcessor::resize(int width, int height)
 
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-    format.setSamples(4);
+    format.setSamples(0);
 
     fbo = new QOpenGLFramebufferObject(width, height, format);
 }

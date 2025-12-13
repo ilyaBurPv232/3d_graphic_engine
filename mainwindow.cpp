@@ -1,14 +1,18 @@
-// mainwindow.cpp
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "openglwidget.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , glWidget(nullptr)
 {
+
+
     ui->setupUi(this);
+
+    setWindowTitle("3D engine");
 
     glWidget = new OpenGLWidget(ui->tab);
     QVBoxLayout *tabLayout = new QVBoxLayout(ui->tab);
@@ -16,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab->setLayout(tabLayout);
 
     glWidget->updateGeometry();
+
 
     ui->tabWidget->setTabText(0, "Сцена");
     ui->tabWidget->setTabText(1, "Пост-обработка");
@@ -35,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->colorFilterRedSlider, &QSlider::valueChanged, this, &MainWindow::onColorFilterRedChanged);
     connect(ui->colorFilterGreenSlider, &QSlider::valueChanged, this, &MainWindow::onColorFilterGreenChanged);
     connect(ui->colorFilterBlueSlider, &QSlider::valueChanged, this, &MainWindow::onColorFilterBlueChanged);
-
 
 }
 
