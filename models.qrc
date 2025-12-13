@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/models">
+        <file>pensil.obj</file>
+    </qresource>
+</RCC>

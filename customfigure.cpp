@@ -223,7 +223,7 @@ void CustomFigure::createCenterFigure()
     // Центральная нижняя вершина
     int centerBottomIndex = m_vertices.size();
     m_vertices.append(VertexData(
-        QVector3D(0.0f, m_centerBottomHeight - 0.5f, 0.0f),
+        QVector3D(0.0f, m_centerBottomHeight - 0.5, 0.0f),
         QVector2D(0.5f, 0.5f),
         QVector3D(0.0f, -1.0f, 0.0f)
         ));

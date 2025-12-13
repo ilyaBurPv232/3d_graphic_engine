@@ -15,6 +15,7 @@ SOURCES += \
     light.cpp \
     main.cpp \
     mainwindow.cpp \
+    objmodel.cpp \
     openglwidget.cpp \
     postprocessor.cpp \
     primitives.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     fpscounter.h \
     light.h \
     mainwindow.h \
+    objmodel.h \
     openglwidget.h \
     postprocessor.h \
     primitives.h \
@@ -54,6 +56,7 @@ DISTFILES += \
     vshader.vsh
 
 RESOURCES += \
+    models.qrc \
     shaders.qrc \
     skyboxes.qrc \
     textures.qrc

@@ -4,6 +4,7 @@
 #include "primitives.h"
 #include "skybox.h"
 #include "customfigure.h"
+#include "objmodel.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -73,6 +74,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
     TextureManager::instance().loadTexture(":/textures/grass.png", "grass");
     TextureManager::instance().loadTexture(":/textures/gorbino_face.png", "face");
+    TextureManager::instance().loadTexture(":/textures/pensil.png", "pensil");
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
@@ -114,15 +116,21 @@ void OpenGLWidget::initializeGL()
     ground->setPosition(QVector3D(0, -0.8f, 0));
     scene.addShape(ground);
 
-    CustomFigure* customFigure = new CustomFigure("magma", 8, 6, 6); // 8-угольник сверху, 6-угольник снизу, 6-угольник в центре
+    CustomFigure* customFigure = new CustomFigure("cubes", 8, 6, 6);
     customFigure->initialize();
     customFigure->setPosition(QVector3D(5.0f, 0.7f, 0.0f));
     customFigure->setScale(QVector3D(1.0f, 1.0f, 1.0f));
     customFigure->setRotation(180.0f, QVector3D(0,0,1));
+
+    ObjModel* objModel = new ObjModel(":/models/pensil.obj", "pensil"); // Укажите путь к вашему OBJ файлу
+    objModel->initialize();
+    objModel->setPosition(QVector3D(-3.0f, 0.5f, 0.0f));
+    objModel->setScale(QVector3D(3.5f, 3.5f, 3.5f)); // Масштабируйте при необходимости
+    scene.addShape(objModel);
+
     scene.addShape(customFigure);
 
-    // Для изменения количества сторон можно использовать:
-    customFigure->setCenterSides(10); // Изменить центральную фигуру на 10-угольник
+    customFigure->setCenterSides(4);
 
 
     light = new Light(this);
