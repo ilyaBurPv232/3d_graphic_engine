@@ -74,7 +74,9 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/water.png", "water");
     TextureManager::instance().loadTexture(":/textures/grass.png", "grass");
     TextureManager::instance().loadTexture(":/textures/gorbino_face.png", "face");
-    TextureManager::instance().loadTexture(":/textures/pensil.png", "pensil");
+    TextureManager::instance().loadTexture(":/textures/orange.jpg", "orange");
+    TextureManager::instance().loadTexture(":/textures/pizza.jpg", "pizza");
+    TextureManager::instance().loadTexture(":/textures/i.jpg", "rus");
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
@@ -121,16 +123,39 @@ void OpenGLWidget::initializeGL()
     customFigure->setPosition(QVector3D(5.0f, 0.7f, 0.0f));
     customFigure->setScale(QVector3D(1.0f, 1.0f, 1.0f));
     customFigure->setRotation(180.0f, QVector3D(0,0,1));
-
-    ObjModel* objModel = new ObjModel(":/models/pensil.obj", "pensil"); // Укажите путь к вашему OBJ файлу
-    objModel->initialize();
-    objModel->setPosition(QVector3D(-3.0f, 0.5f, 0.0f));
-    objModel->setScale(QVector3D(3.5f, 3.5f, 3.5f)); // Масштабируйте при необходимости
-    scene.addShape(objModel);
-
     scene.addShape(customFigure);
-
     customFigure->setCenterSides(4);
+
+    ObjModel* Orange = new ObjModel(":/models/orange.obj", "orange");
+    Orange->initialize();
+    Orange->setPosition(QVector3D(-3.0f, -0.8f, -5.0f));
+    Orange->setScale(QVector3D(12.5f, 12.5f, 12.5f));
+    scene.addShape(Orange);
+
+    ObjModel* Pizza = new ObjModel(":/models/pizza.obj", "pizza");
+    Pizza->initialize();
+    Pizza->setPosition(QVector3D(-5.0f, -0.7f, 3.0f));
+    Pizza->setScale(QVector3D(10.0f, 10.0f, 10.0f));
+    scene.addShape(Pizza);
+
+    ObjModel* SHIP = new ObjModel(":/models/SHIP.obj", "cubes");
+    SHIP->initialize();
+    SHIP->setPosition(QVector3D(3.0f, 2.7f, 7.0f));
+    SHIP->setScale(QVector3D(0.8f, 0.8f, 0.8f));
+    scene.addShape(SHIP);
+
+    ObjModel* pop = new ObjModel(":/models/pop.obj", "rus");
+    pop->initialize();
+    pop->setPosition(QVector3D(4.0f, 2.7f, 15.0f));
+    pop->setScale(QVector3D(0.8f, 0.8f, 0.8f));
+    scene.addShape(pop);
+
+    ObjModel* push = new ObjModel(":/models/push.obj", "rus");
+    push->initialize();
+    push->setPosition(QVector3D(1.0f, 2.7f, 15.0f));
+    push->setScale(QVector3D(0.2f, 0.2f, 0.2f));
+    scene.addShape(push);
+
 
 
     light = new Light(this);

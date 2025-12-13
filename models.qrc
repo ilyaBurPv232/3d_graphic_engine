@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/models">
-        <file>pensil.obj</file>
+        <file>orange.obj</file>
+        <file>pizza.obj</file>
+        <file>SHIP.obj</file>
+        <file>pop.obj</file>
+        <file>push.obj</file>
     </qresource>
 </RCC>
