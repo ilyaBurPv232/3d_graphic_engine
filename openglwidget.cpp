@@ -104,10 +104,13 @@ void OpenGLWidget::initializeGL()
     lightSphere->setScale(QVector3D(0.5f, 0.5f, 0.5f));
     scene.addShape(lightSphere);
 
-    Cube *cube = new Cube("magma");
-    cube->initialize();
-    cube->setScale(QVector3D(1.5f, 1.5f, 1.5f));
-    scene.addShape(cube);
+    ProceduralCube* procCube = new ProceduralCube("magma");
+    procCube->initialize();
+    procCube->setPosition(QVector3D(0.0f, 0.0f, 0.0f));
+    procCube->setScale(QVector3D(1.5f, 1.5f, 1.5f));
+    procCube->setLetterScale(2.0f);
+    procCube->setLetterIntensity(1.0f);
+    scene.addShape(procCube);
 
     Pyramid *pyramid = new Pyramid("wood");
     pyramid->initialize();
@@ -168,15 +171,6 @@ void OpenGLWidget::initializeGL()
     push->setPosition(QVector3D(1.0f, 2.7f, 15.0f));
     push->setScale(QVector3D(0.2f, 0.2f, 0.2f));
     scene.addShape(push);
-
-    ProceduralCube* procCube = new ProceduralCube("magma");
-    procCube->initialize();
-    procCube->setPosition(QVector3D(10.0f, 2.0f, 0.0f));  // Сдвинуть в сторону
-    procCube->setScale(QVector3D(2.0f, 2.0f, 2.0f));     // Уменьшить масштаб
-    procCube->setLetterScale(2.0f);
-    procCube->setLetterIntensity(0.7f);
-    scene.addShape(procCube);
-
 
     light = new Light(this);
     connect(light, &Light::lightChanged, this, QOverload<>::of(&OpenGLWidget::update));
@@ -287,6 +281,7 @@ void OpenGLWidget::paintGL()
         proceduralProgram->setUniformValue("lightSharpness", light->lightSharpness());
         proceduralProgram->setUniformValue("lightFalloff", light->lightFalloff());
         proceduralProgram->setUniformValue("gamma", light->gamma());
+        proceduralProgram->setUniformValue("time", animCounter);
         proceduralProgram->setUniformValue("view", scene.getViewMatrix());
         proceduralProgram->setUniformValue("projection", scene.getProjectionMatrix());
         proceduralProgram->release();
