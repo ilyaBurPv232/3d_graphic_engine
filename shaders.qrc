@@ -6,5 +6,7 @@
         <file>vskybox.vsh</file>
         <file>postprocessing.fsh</file>
         <file>postprocessing.vsh</file>
+        <file>vshader_procedural.vsh</file>
+        <file>fshader_procedural.fsh</file>
     </qresource>
 </RCC>

@@ -9,13 +9,11 @@ class Cube : public Shape {
 public:
     Cube(const QString& textureName = "default");
     ~Cube() = default;
-
     void initialize() override;
     void render(QOpenGLShaderProgram& program) override;
-
-private:
+protected:  // Изменяем с private на protected
     void setupVertices();
-    QString textureName;
+    QString textureName;  // Теперь доступно в производных классах
 };
 
 class Pyramid : public Shape {

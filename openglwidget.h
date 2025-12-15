@@ -46,6 +46,7 @@ private:
     FPSCounter* fpsCounter;
     PostProcessor* postProcessor;
     QOpenGLShaderProgram* postProcessingProgram;
+    QOpenGLShaderProgram* proceduralProgram;
 
     bool moveForward = false;
     bool moveBackward = false;

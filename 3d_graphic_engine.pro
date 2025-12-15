@@ -19,6 +19,7 @@ SOURCES += \
     openglwidget.cpp \
     postprocessor.cpp \
     primitives.cpp \
+    proceduralcube.cpp \
     scene.cpp \
     shadermanager.cpp \
     shape.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     openglwidget.h \
     postprocessor.h \
     primitives.h \
+    proceduralcube.h \
     scene.h \
     shadermanager.h \
     shape.h \

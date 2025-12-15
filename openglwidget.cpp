@@ -5,6 +5,7 @@
 #include "skybox.h"
 #include "customfigure.h"
 #include "objmodel.h"
+#include "proceduralcube.h"
 #include <QDebug>
 #include <QMouseEvent>
 #include <QWheelEvent>
@@ -54,6 +55,8 @@ void OpenGLWidget::initializeGL()
         return;
     }
 
+
+
     program = ShaderManager::instance().getShaderProgram("default");
     skyBoxProgram = ShaderManager::instance().getShaderProgram("skybox");
 
@@ -66,6 +69,15 @@ void OpenGLWidget::initializeGL()
         qCritical() << "Failed to load postprocessing shaders!";
     }
     postProcessingProgram = ShaderManager::instance().getShaderProgram("postprocessing");
+
+    if (!ShaderManager::instance().loadShaderProgram("procedural",
+                                                     ":/shaders/vshader_procedural.vsh",
+                                                     ":/shaders/fshader_procedural.fsh")) {
+        qCritical() << "Failed to load procedural shaders!";
+    }
+
+    proceduralProgram = ShaderManager::instance().getShaderProgram("procedural");
+
 
 
     TextureManager::instance().loadTexture(":/textures/magma.png", "magma");
@@ -157,6 +169,13 @@ void OpenGLWidget::initializeGL()
     push->setScale(QVector3D(0.2f, 0.2f, 0.2f));
     scene.addShape(push);
 
+    ProceduralCube* procCube = new ProceduralCube("magma");
+    procCube->initialize();
+    procCube->setPosition(QVector3D(10.0f, 2.0f, 0.0f));  // Сдвинуть в сторону
+    procCube->setScale(QVector3D(2.0f, 2.0f, 2.0f));     // Уменьшить масштаб
+    procCube->setLetterScale(2.0f);
+    procCube->setLetterIntensity(0.7f);
+    scene.addShape(procCube);
 
 
     light = new Light(this);
@@ -243,9 +262,37 @@ void OpenGLWidget::paintGL()
         program->setUniformValue("lightSharpness", light->lightSharpness());
         program->setUniformValue("lightFalloff", light->lightFalloff());
         program->setUniformValue("gamma", light->gamma());
+        program->bind();
         scene.renderAll(*program);
         program->release();
     }
+
+    QOpenGLShaderProgram* proceduralProgram = ShaderManager::instance().getShaderProgram("procedural");
+    if (proceduralProgram) {
+        proceduralProgram->bind();
+        proceduralProgram->setUniformValue("lightPos", light->position());
+        proceduralProgram->setUniformValue("viewPos", scene.getCameraPosition());
+        proceduralProgram->setUniformValue("lightColor", light->color());
+        proceduralProgram->setUniformValue("lightDirection", light->direction());
+        proceduralProgram->setUniformValue("ambientStrength", light->ambientStrength());
+        proceduralProgram->setUniformValue("specularStrength", light->specularStrength());
+        proceduralProgram->setUniformValue("shininess", light->shininess());
+        proceduralProgram->setUniformValue("lightType", light->lightType());
+        proceduralProgram->setUniformValue("cutOff", light->cutOff());
+        proceduralProgram->setUniformValue("outerCutOff", light->outerCutOff());
+        proceduralProgram->setUniformValue("lightSphereEnabled", light->lightSphereEnabled());
+        proceduralProgram->setUniformValue("objectColor", QVector3D(1.0f, 1.0f, 1.0f));
+        proceduralProgram->setUniformValue("lightContrast", light->lightContrast());
+        proceduralProgram->setUniformValue("lightSaturation", light->lightSaturation());
+        proceduralProgram->setUniformValue("lightSharpness", light->lightSharpness());
+        proceduralProgram->setUniformValue("lightFalloff", light->lightFalloff());
+        proceduralProgram->setUniformValue("gamma", light->gamma());
+        proceduralProgram->setUniformValue("view", scene.getViewMatrix());
+        proceduralProgram->setUniformValue("projection", scene.getProjectionMatrix());
+        proceduralProgram->release();
+    }
+
+
 
     postProcessor->endRender();
 
