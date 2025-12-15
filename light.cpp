@@ -89,3 +89,43 @@ void Light::setShininess(int shininess)
         emit lightChanged();
     }
 }
+
+void Light::setLightContrast(float contrast)
+{
+    if (m_lightContrast != contrast && contrast >= 0.0f) {
+        m_lightContrast = contrast;
+        emit lightChanged();
+    }
+}
+
+void Light::setLightSaturation(float saturation)
+{
+    if (m_lightSaturation != saturation && saturation >= 0.0f) {
+        m_lightSaturation = saturation;
+        emit lightChanged();
+    }
+}
+
+void Light::setLightSharpness(float sharpness)
+{
+    if (m_lightSharpness != sharpness && sharpness >= 0.0f) {
+        m_lightSharpness = sharpness;
+        emit lightChanged();
+    }
+}
+
+void Light::setLightFalloff(float falloff)
+{
+    if (m_lightFalloff != falloff && falloff >= 0.0f) {
+        m_lightFalloff = falloff;
+        emit lightChanged();
+    }
+}
+
+void Light::setGamma(float gamma)
+{
+    if (m_gamma != gamma && gamma >= 0.0f) {
+        m_gamma = gamma;
+        emit lightChanged();
+    }
+}

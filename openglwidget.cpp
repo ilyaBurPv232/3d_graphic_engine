@@ -77,6 +77,7 @@ void OpenGLWidget::initializeGL()
     TextureManager::instance().loadTexture(":/textures/orange.jpg", "orange");
     TextureManager::instance().loadTexture(":/textures/pizza.jpg", "pizza");
     TextureManager::instance().loadTexture(":/textures/i.jpg", "rus");
+    TextureManager::instance().loadTexture(":/textures/kekil.jpg", "kekil");
 
     Skybox *skybox = new Skybox();
     skybox->initialize();
@@ -102,7 +103,7 @@ void OpenGLWidget::initializeGL()
     pyramid->setScale(QVector3D(1.5f, 1.2f, 1.5f));
     scene.addShape(pyramid);
 
-    Sphere *sphere = new Sphere("face", 0.5f);
+    Sphere *sphere = new Sphere("kekil", 0.5f);
     sphere->initialize();
     sphere->setRotation(90, QVector3D(0, 1, 0));
     scene.addShape(sphere);
@@ -237,6 +238,11 @@ void OpenGLWidget::paintGL()
         program->setUniformValue("outerCutOff", light->outerCutOff());
         program->setUniformValue("lightSphereEnabled", light->lightSphereEnabled());
         program->setUniformValue("objectColor", QVector3D(1.0f, 1.0f, 1.0f));
+        program->setUniformValue("lightContrast", light->lightContrast());
+        program->setUniformValue("lightSaturation", light->lightSaturation());
+        program->setUniformValue("lightSharpness", light->lightSharpness());
+        program->setUniformValue("lightFalloff", light->lightFalloff());
+        program->setUniformValue("gamma", light->gamma());
         scene.renderAll(*program);
         program->release();
     }

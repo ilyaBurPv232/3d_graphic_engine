@@ -34,6 +34,18 @@ public:
     void setOuterCutOff(float outerCutOff);
     void setLightSphereEnabled(bool enabled);
 
+    float lightContrast() const { return m_lightContrast; }
+    float lightSaturation() const { return m_lightSaturation; }
+    float lightSharpness() const { return m_lightSharpness; }
+    float lightFalloff() const { return m_lightFalloff; }
+    float gamma() const { return m_gamma; }
+
+    void setLightContrast(float contrast);
+    void setLightSaturation(float saturation);
+    void setLightSharpness(float sharpness);
+    void setLightFalloff(float falloff);
+    void setGamma(float gamma);
+
 signals:
     void lightChanged();
 
@@ -48,6 +60,12 @@ private:
     float m_cutOff = qCos(qDegreesToRadians(12.5f));
     float m_outerCutOff = qCos(qDegreesToRadians(17.5f));
     bool m_lightSphereEnabled = true; // Сфера-источник включена
+
+    float m_lightContrast = 1.2f;
+    float m_lightSaturation = 1.0f;
+    float m_lightSharpness = 1.0f;
+    float m_lightFalloff = 1.0f;
+    float m_gamma = 1.5f;
 };
 
 #endif // LIGHT_H
